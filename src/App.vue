@@ -5,9 +5,12 @@
 </template>
 
 <script>
+import util from 'scripts/utils/util'
 
 export default {
   name: 'app',
+  mounted() {
+  },
   components: {
   }
 }

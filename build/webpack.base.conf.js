@@ -31,7 +31,7 @@ module.exports = {
       'src': srcPath,
       'scripts': path.resolve(srcPath, 'scripts'),
       'bower_components': path.resolve(root, 'bower_components'),
-      'snap.svg': path.resolve(root, 'bower_components/snap.svg/dist/snap.svg.js'),
+      'snapsvg-cjs': path.resolve(root, 'node_modules/snapsvg-cjs'),
       'assets': path.resolve(__dirname, '../src/assets'),
       'components': path.resolve(__dirname, '../src/components')
     }
@@ -47,12 +47,12 @@ module.exports = {
       //   include: projectRoot,
       //   exclude: /node_modules/
       // },
-      {
-        test: /\.js$/,
-        loader: 'eslint',
-        include: projectRoot,
-        exclude: /node_modules/
-      }
+      // {
+      //   test: /\.js$/,
+      //   loader: 'eslint',
+      //   include: projectRoot,
+      //   exclude: /node_modules/
+      // }
     ],
     loaders: [
       {
@@ -97,10 +97,13 @@ module.exports = {
       utils.cssLoaders({ sourceMap: useCssSourceMap })
       // {js: 'vue-ts-loader'}
     ),
-    postcss: [
-      require('autoprefixer')({
-        browsers: ['last 2 versions']
-      })
-    ]
+    // postcss: [
+    //   require('autoprefixer')({
+    //     browsers: ['last 2 versions']
+    //   })
+    // ]
+  },
+  ts: {
+    entryFileIsJs: true
   }
 }
