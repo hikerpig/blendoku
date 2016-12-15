@@ -1,8 +1,10 @@
+import Game, {ColorBlock} from './game'
 
-var state = {
+var state:any = {
   game: {},
   config: {
   },
+  // blocks: []: Array<ColorBlock>
   blocks: []
 }
 

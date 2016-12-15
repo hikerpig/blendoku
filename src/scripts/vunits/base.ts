@@ -10,11 +10,11 @@ import {assign} from 'lodash'
 //   gh: Number,
 // }
 
-class VunitCoord {
-  gx: Number
-  gy: Number
-  gw: Number
-  gh: Number
+export class VunitCoord {
+  gx: Number = 0
+  gy: Number = 0
+  gw: Number = 1
+  gh: Number = 1
 
   constructor(options:any={}) {
     this.gx = options.gx || 0
@@ -34,6 +34,9 @@ interface VunitOptions extends Object {
   coord?: VunitCoord,
   size?: VunitSize
 }
+
+// export VunitCoord
+// export interface VunitOptions
 
 export default class Vunit {
   public sele: Snap.Element

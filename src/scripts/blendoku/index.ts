@@ -1,6 +1,11 @@
-import Game from './game'
+import Game, {ColorBlock} from './game'
 import Board from '../vunits/board'
+import DEBUG_TOOLS from './debug'
 
+/**
+ * @class Blendoku
+ * 连接视图和游戏逻辑的game director
+ */
 export class Blendoku {
   public game: Game
   public board: Board
@@ -12,10 +17,12 @@ export class Blendoku {
   }
 
   public start(): Blendoku {
-    // TODO: dispatch
-    let initData = {
-
-    }
+    let blocks = DEBUG_TOOLS.getInitialBlocks()
+    // console.log("blocks", blocks)
+    // TODO： 建立视图对于game store data的监听
+    this.game.loadData({
+      blocks: blocks
+    })
     return this
   }
 
