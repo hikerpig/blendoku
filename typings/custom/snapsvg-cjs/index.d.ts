@@ -172,6 +172,7 @@ declare module Snap {
 		use():Snap.Element;
 		clone():Snap.Element;
 		toDefs():Snap.Element;
+		addClass(cls:string):Snap.Element;
 		pattern(x:any,y:any,width:any,height:any):Snap.Element;
 		marker(x:number,y:number,width:number,height:number,refX:number,refY:number):Snap.Element;
 		animation(attr:Object,duration:number,easing?:Function,callback?:Function):Object;

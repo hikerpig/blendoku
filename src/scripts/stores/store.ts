@@ -1,17 +1,11 @@
-import {Store} from 'vuex'
-import * as Blendoku from 'scripts/blendoku/store'
-import Vue from 'vue'
-import Vuex from 'vuex'
-Vue.use(Vuex)
-import {extend, each} from 'lodash'
-
-interface StoreOptions {
-  modules?: Object
-}
+import Blendoku from '../blendoku/store'
+import * as Vue from 'vue'
+import {install, Store} from 'vuex'
+install(Vue)
 
 var store = new Store({
   modules: {
-    doku: Blendoku
+    game: Blendoku
   }
 })
 

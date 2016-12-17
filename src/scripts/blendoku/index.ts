@@ -1,6 +1,9 @@
 import Game, {ColorBlock} from './game'
-import Board from '../vunits/board'
+import VBoard from '../vunits/board'
+import VBlock from '../vunits/block'
 import DEBUG_TOOLS from './debug'
+import * as getters from './getters'
+import * as SnapSvg from 'snapsvg-cjs'
 
 /**
  * @class Blendoku
@@ -8,18 +11,25 @@ import DEBUG_TOOLS from './debug'
  */
 export class Blendoku {
   public game: Game
-  public board: Board
-  constructor() {
+  public board: VBoard
+  public blocks: Array<VBlock> = []
+  public store: any
+  public paper: Paper
+  constructor(options: any) {
     this.game = new Game()
-    var board = new Board()
+    let paper = SnapSvg()
+    this.paper = paper
+
+    var board = new VBoard({paper})
     this.board = board
     this.resizeToFit()
+    this.store = options.store
+    this.initStoreWatcher(this.store)
   }
 
   public start(): Blendoku {
     let blocks = DEBUG_TOOLS.getInitialBlocks()
-    // console.log("blocks", blocks)
-    // TODO： 建立视图对于game store data的监听
+    console.log('initial blocks', blocks)
     this.game.loadData({
       blocks: blocks
     })
@@ -37,5 +47,23 @@ export class Blendoku {
     }
     this.board.draw()
     this.board.setSize({width: bodyRect.width, height: bodyRect.height})
+  }
+
+  protected initBlocks(blocks: Array<ColorBlock>):void {
+    blocks.forEach((block) => {
+      let vBlock = new VBlock({
+        paper: this.paper,
+        color: block.color,
+        coord: block.coord
+      })
+      vBlock.draw()
+      this.blocks.push(vBlock)
+    })
+  }
+
+  protected initStoreWatcher(store: any):void {
+    store.watch(getters.blocks, (blocks:Array<ColorBlock>) => {
+      this.initBlocks(blocks)
+    })
   }
 }

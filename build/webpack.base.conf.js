@@ -27,9 +27,10 @@ module.exports = {
     extensions: ['', '.ts', '.js', '.vue'],
     fallback: [path.join(__dirname, '../node_modules')],
     alias: {
-      'vue$': 'vue/dist/vue.common.js',
+      // 'vue$': 'vue/dist/vue.common.js',
       'src': srcPath,
       'scripts': path.resolve(srcPath, 'scripts'),
+      'styles': path.resolve(srcPath, 'styles'),
       'bower_components': path.resolve(root, 'bower_components'),
       'snapsvg-cjs': path.resolve(root, 'node_modules/snapsvg-cjs'),
       'assets': path.resolve(__dirname, '../src/assets'),

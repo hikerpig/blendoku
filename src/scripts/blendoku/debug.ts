@@ -1,19 +1,80 @@
 import * as COLORS from './colors'
-import Game, {ColorBlock} from './game'
+const {makeColorRange} = COLORS
+import Game, {ColorBlock, DIRECTIONS, randomDirection} from './game'
 import Vunit, {VunitCoord} from '../vunits/base'
+import {some} from 'lodash'
 
 const DEBUG_TOOLS = {
+  /**
+   * 生成颜色块，目前是随机
+   * @method getInitialBlocks
+   * @return {Array<ColorBlock>}
+   */
   getInitialBlocks(): Array<ColorBlock> {
+    // TODO: given colors, calc solution ?
     let blkOpts = [
-      [COLORS.makeColorRange([ 1,1,1 ], [90, 90, 90]), 2]
+      // [makeColorRange([ 1,1,1 ], [90, 90, 90]), 3],
+      // [makeColorRange([ 100,1,1 ], [180, 90, 90]), 2],
+      // [makeColorRange([ 100,10,30 ], [130, 100, 90]), 3],
+      // [makeColorRange([ 200,10,30 ], [250, 50, 90]), 3],
+      // [makeColorRange([ 250,10,30 ], [300, 50, 100]), 3],
+      [makeColorRange([ 80,20,30 ], [120, 60, 100]), 4],
+      [makeColorRange([ 10,20,30 ], [100, 60, 80]), 3],
     ]
-    return Game.generateBlocks(blkOpts).map((blk) => {
-      blk.coord = new VunitCoord({
-        gx: 30 * Math.random() >> 0,
-        gy: 20 * Math.random() >> 0
+    let out:Array<ColorBlock> = []
+    let curCoords:Array<VunitCoord> = []
+    blkOpts.map((arr:any) => {
+      let direc = randomDirection()
+      // console.log('direc is', direc)
+      let count = arr[arr.length - 1] + 2
+      let coords = DEBUG_TOOLS.getValidCoords(count, curCoords)
+      curCoords.concat(coords)
+      Game.generateBlocks([arr]).map((blk, i) => {
+        blk.coord = coords[i]
+        out.push(blk)
       })
-      return blk
     })
+    return out
+  },
+  /**
+   * Make sure coords does not collide
+   * TODO: edge of the board
+   * @method getValidCoords
+   * @param  {number}            count
+   * @param  {Array<VunitCoord>} curCoords
+   * @param  {string}            direc     One of DIRECTIONS
+   * @return Array<VunitCoord>
+   */
+  getValidCoords(count:number, curCoords:Array<VunitCoord>, direc?:string):Array<VunitCoord> {
+    let startCoord:VunitCoord
+    if (!direc) {
+      direc = randomDirection()
+    }
+    let maxRec = 90
+    let _hasSameStart = function(coord:VunitCoord):boolean {
+      return curCoords.some((c:VunitCoord) => {
+        return VunitCoord.isSameStart(coord, c)
+      })
+    }
+    while (true) {
+      let valid = true
+      startCoord = new VunitCoord({
+        gx: 12 * Math.random() >> 0,
+        gy: 15 * Math.random() >> 0
+      })
+      let coords = Game.makeCoords(startCoord, direc, count)
+      for (let i = 0; i < coords.length; i++) {
+        let coord = coords[i]
+        if (_hasSameStart(coord)) {
+          valid = false
+          break
+        }
+      }
+      if (valid) {
+        return coords
+      }
+      maxRec--
+    }
   }
 
 }
