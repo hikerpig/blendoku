@@ -1,6 +1,6 @@
 import * as COLORS from './colors'
 const {makeColorRange} = COLORS
-import Game, {ColorBlock, DIRECTIONS, randomDirection} from './game'
+import Game, {IColorBlock, DIRECTIONS, randomDirection, GameConfig} from './game'
 import Vunit, {VunitCoord} from '../vunits/base'
 import {some} from 'lodash'
 
@@ -10,7 +10,7 @@ const DEBUG_TOOLS = {
    * @method getInitialBlocks
    * @return {Array<ColorBlock>}
    */
-  getInitialBlocks(): Array<ColorBlock> {
+  getInitialBlocks(config: GameConfig): Array<IColorBlock> {
     // TODO: given colors, calc solution ?
     let blkOpts = [
       // [makeColorRange([ 1,1,1 ], [90, 90, 90]), 3],
@@ -18,16 +18,16 @@ const DEBUG_TOOLS = {
       // [makeColorRange([ 100,10,30 ], [130, 100, 90]), 3],
       // [makeColorRange([ 200,10,30 ], [250, 50, 90]), 3],
       // [makeColorRange([ 250,10,30 ], [300, 50, 100]), 3],
-      [makeColorRange([ 80,20,30 ], [120, 60, 100]), 4],
+      // [makeColorRange([ 80,20,30 ], [120, 60, 100]), 4],
       [makeColorRange([ 10,20,30 ], [100, 60, 80]), 3],
     ]
-    let out:Array<ColorBlock> = []
+    let out:Array<IColorBlock> = []
     let curCoords:Array<VunitCoord> = []
     blkOpts.map((arr:any) => {
       let direc = randomDirection()
       // console.log('direc is', direc)
       let count = arr[arr.length - 1] + 2
-      let coords = DEBUG_TOOLS.getValidCoords(count, curCoords)
+      let coords = DEBUG_TOOLS.getValidCoords(count, curCoords, config)
       curCoords.concat(coords)
       Game.generateBlocks([arr]).map((blk, i) => {
         blk.coord = coords[i]
@@ -38,14 +38,13 @@ const DEBUG_TOOLS = {
   },
   /**
    * Make sure coords does not collide
-   * TODO: edge of the board
    * @method getValidCoords
    * @param  {number}            count
    * @param  {Array<VunitCoord>} curCoords
    * @param  {string}            direc     One of DIRECTIONS
    * @return Array<VunitCoord>
    */
-  getValidCoords(count:number, curCoords:Array<VunitCoord>, direc?:string):Array<VunitCoord> {
+  getValidCoords(count:number, curCoords:Array<VunitCoord>, config, direc?:string):Array<VunitCoord> {
     let startCoord:VunitCoord
     if (!direc) {
       direc = randomDirection()
@@ -56,6 +55,7 @@ const DEBUG_TOOLS = {
         return VunitCoord.isSameStart(coord, c)
       })
     }
+    let {w, h} = config.boardUSize
     while (true) {
       let valid = true
       startCoord = new VunitCoord({
@@ -65,6 +65,14 @@ const DEBUG_TOOLS = {
       let coords = Game.makeCoords(startCoord, direc, count)
       for (let i = 0; i < coords.length; i++) {
         let coord = coords[i]
+        // Avoid edge of the board
+        if (
+          ((coord.gx * coord.gy) < 0) ||
+          ((coord.gx >= w) || (coord.gy >= h))
+        ) {
+          valid = false
+          break
+        }
         if (_hasSameStart(coord)) {
           valid = false
           break

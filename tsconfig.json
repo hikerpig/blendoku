@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es6",
     "module": "commonjs",
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "removeComments": true,
     "allowSyntheticDefaultImports": true,
     "preserveConstEnums": true,
@@ -11,10 +11,14 @@
     "baseUrl": ".",
     "paths": {
       "snapsvg-cjs": ["node_modules/snapsvg-cjs/dist/snap.svg"],
-      "scripts": ["src/scripts"]
+      "*": [
+        "*",
+        "src/*"
+      ]
     }
   },
   "include": [
+    "node_modules/vue/types/index.d.ts"
   ],
   "exclude": [
     "node_modules",

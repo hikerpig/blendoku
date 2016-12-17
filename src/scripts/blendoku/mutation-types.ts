@@ -14,8 +14,13 @@ import 'vuex'
 //   'ADD_BLOCKS'
 // ])
 var mts = {
-  ADD_BLOCKS: 'ADD_BLOCKS'
+  ADD_BLOCKS: null,
+  DRAG_BLOCK_TO: null
 }
+for(var k in mts) {
+  mts[k] = k
+}
+
 export default mts
 // export default keyMirror({
 //   ADD_BLOCKS: null,

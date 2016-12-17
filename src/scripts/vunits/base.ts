@@ -1,8 +1,24 @@
 /// <reference path="../../../typings/custom/snapsvg-cjs/index.d.ts" />
 import * as SnapSvg from 'snapsvg-cjs'
-import {assign} from 'lodash'
+import {assign, uniqueId} from 'lodash'
+import store from 'scripts/stores/store'
+import * as getters from '../blendoku/getters'
 
-export class VunitCoord {
+export interface IVunitCoord {
+  gx: number
+  gy: number
+  gw?: number
+  gh?: number
+}
+
+export interface IEleCoord {
+  x: number
+  y: number
+  width?: number
+  height?: number
+}
+
+export class VunitCoord implements IVunitCoord{
   gx: number = 0
   gy: number = 0
   gw: number = 1
@@ -32,27 +48,36 @@ export interface VunitOptions {
 }
 
 export default class Vunit {
-  public sele: Snap.Element | void
+  public sele: Snap.Element
   static Snap = SnapSvg
   public coord: VunitCoord
+  public uid: string
   public size: VunitSize
-  public unitLen: number = 40
+  public get unitLen() {
+    return getters.unitLen(store.state)
+  }
   public paper: Paper
+  public vue: Object
+  protected _state: any
 
   constructor(options: VunitOptions={}) {
+    this.uid = uniqueId()
     this.coord = options.coord || new VunitCoord()
     this.paper = options.paper
+    this._state = {}
   }
 
   public draw () {
     if (!this.sele) {
       let sele = this.formEle()
       this.sele = sele
+      this.bindSeleEvents()
     }
     this.redraw()
   }
   public redraw() {}
-  public formEle(): Snap.Element | void {return null}
+  public formEle(): Snap.Element {return null}
+  public bindSeleEvents():void {}
   public getSnap(): Paper {
     if (!this.paper) {
       this.paper = SnapSvg()
@@ -68,5 +93,25 @@ export default class Vunit {
     assign(this.size, size)
     // console.log('assign size', this.size)
     this.sele.attr({width: this.size.width, height: this.size.height})
+  }
+
+  public dispatch() {
+    store.commit.apply(store, arguments)
+  }
+
+  public refreshBy(args: Object):Vunit {
+    return this
+  }
+}
+
+export function getSeleCoord(sele: Snap.Element): Object {
+  return {x: sele.attr('x')>>0, y: sele.attr('y')>>0}
+}
+
+export function alignToVcoord(c: IEleCoord):IVunitCoord {
+  let unitLen = getters.unitLen(store.state)
+  return {
+    gx: (c.x / unitLen) >> 0,
+    gy: (c.y / unitLen) >> 0,
   }
 }
