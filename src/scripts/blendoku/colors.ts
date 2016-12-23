@@ -1,11 +1,19 @@
 import VunitCoord from '../vunits/base'
 import {reduce, range, clone} from 'lodash'
+import {observable, computed} from 'mobx'
 
-export interface HSLColor {
+export interface IHSLColor {
   h?: number,
   s?: number,
   l?: number
 }
+export class HSLColor implements IHSLColor {
+  @observable h?: number
+  @observable s?: number
+  @observable l?: number
+  @computed get hex():string { return hslToHex(this) }
+}
+
 export interface RGBColor {
   r?: number,
   g?: number,
@@ -13,10 +21,14 @@ export interface RGBColor {
 }
 
 export function makeHsl(h: number, s: number, l:number): HSLColor {
-  return {h, s, l}
+  let hsl = new HSLColor
+  hsl.h = h
+  hsl.s = s
+  hsl.l = l
+  return hsl
 }
 
-export function hslToHex(c: HSLColor): String {
+export function hslToHex(c: HSLColor): string {
   return rgbToHex(hslToRgb(c))
 }
 
@@ -32,11 +44,11 @@ export function makeColorRange(sa: number[], ea: number[]): ColorRange {
   }
 }
 
-export function nToHex(n: number):String {
+export function nToHex(n: number):string {
   return n.toString(16)
 }
 
-export function rgbToHex(c: RGBColor):String {
+export function rgbToHex(c: RGBColor):string {
   return `#${nToHex(c.r)}${nToHex(c.g)}${nToHex(c.b)}`
 }
 
@@ -78,7 +90,7 @@ export function makeColorStops(cr: ColorRange, split: number = 0):Array<HSLColor
   let out = [clone(sc)]
   if (split) {
     let gaps = split + 1
-    let cdiffs:HSLColor = {}, csteps:HSLColor = {}
+    let cdiffs:IHSLColor = {}, csteps:IHSLColor = {}
     // TODO: 太蠢了... 怎么做才能更概括呢...
     cdiffs.h = ec.h - sc.h
     cdiffs.s = ec.s - sc.s
@@ -87,11 +99,12 @@ export function makeColorStops(cr: ColorRange, split: number = 0):Array<HSLColor
     csteps.s = cdiffs.s / gaps
     csteps.l = cdiffs.l / gaps
     range(1, gaps).map(function (st) {
-      let c: HSLColor = {
+      let c = new HSLColor
+      Object.assign(c,{
         h: Math.round(sc.h + (st * csteps.h)),
         s: Math.round(sc.s + (st * csteps.s)),
         l: Math.round(sc.l + (st * csteps.l)),
-      }
+      })
       out.push(c)
     })
   }

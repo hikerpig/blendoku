@@ -2,7 +2,7 @@ import * as COLORS from './colors'
 const {makeColorRange} = COLORS
 import Game, {IColorBlock, DIRECTIONS, randomDirection, GameConfig} from './game'
 import Vunit, {VunitCoord} from '../vunits/base'
-import {some} from 'lodash'
+import {some, assign} from 'lodash'
 
 const DEBUG_TOOLS = {
   /**
@@ -30,7 +30,8 @@ const DEBUG_TOOLS = {
       let coords = DEBUG_TOOLS.getValidCoords(count, curCoords, config)
       curCoords.concat(coords)
       Game.generateBlocks([arr]).map((blk, i) => {
-        blk.coord = coords[i]
+        assign(blk.coord, coords[i])
+        blk.coord = blk.coord
         out.push(blk)
       })
     })

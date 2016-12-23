@@ -8,6 +8,7 @@ import globals from 'scripts/globals'
 import * as Vue from 'vue'
 import DataVue from '../watcher-vues/data-vue'
 import BlockVue from '../watcher-vues/block-vue'
+import {reaction, autorun} from 'mobx'
 
 /**
  * @class Blendoku
@@ -27,9 +28,13 @@ export class Blendoku {
   public paper: Paper
   constructor(options: any) {
     this.store = options.store
+    console.log(this.store);
+
     this.game = new Game({
-      data: getters.data(this.getStore().state),
-      config: getters.config(this.getStore().state)
+      data: getters.data(this.getStore()),
+      config: getters.config(this.getStore())
+      // data: getters.data(this.getStore().state),
+      // config: getters.config(this.getStore().state)
     })
     globals.game = this.game
     let paper = SnapSvg()
@@ -45,6 +50,7 @@ export class Blendoku {
 
   public start(): Blendoku {
     let blocks = DEBUG_TOOLS.getInitialBlocks(this.game.config)
+
     this.game.loadData({
       blocks: blocks
     })
@@ -75,6 +81,7 @@ export class Blendoku {
     var noop = function(){}
     let {game} = this
 
+    // console.log('init blocks', blocks, blocks.length);
     blocks.forEach((block) => {
       let vBlock = new VBlock({
         paper: this.paper,
@@ -84,25 +91,32 @@ export class Blendoku {
       vBlock.draw()
       this.blocks.push(vBlock)
 
-      let dv = new BlockVue({
-        propsData: {
-          data: block
-        }
-      })
-      vBlock.vue = dv
-      dv.$on('update', (payload) => {
-        // console.log('on update', payload);
-        game.updateBlock(payload)
-        vBlock.refreshBy(payload)
-      })
+      // console.log('new block', block.coord, block.color);
+
+      // let dv = new BlockVue({
+      //   propsData: {
+      //     data: block
+      //   }
+      // })
+      // vBlock.vue = dv
+      // dv.$on('update', (payload) => {
+      //   console.log('on update', payload);
+      //   game.updateBlock(payload)
+      //   vBlock.refreshBy(payload)
+      // })
     })
   }
 
   protected initStoreWatcher(store: any):void {
-    this.getStore().watch(getters.blocks, (blocks:Array<IColorBlock>) => {
-      console.log('blocks changed');
-      this.initBlocks(blocks)
-    })
+    reaction(
+      () => {return store.blocks.length},
+      () => {
+        let blocks  = store.blocks
+        console.log('got blocks', blocks.toJSON());
+        this.initBlocks(blocks)
+      },
+      true
+    )
   }
 
   getStore(): any {

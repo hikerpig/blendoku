@@ -3,6 +3,8 @@ import * as SnapSvg from 'snapsvg-cjs'
 import {assign, uniqueId} from 'lodash'
 import store from 'scripts/stores/store'
 import * as getters from '../blendoku/getters'
+import {observable, reaction, computed} from 'mobx'
+import util from 'scripts/utils/util'
 
 export interface IVunitCoord {
   gx: number
@@ -19,16 +21,22 @@ export interface IEleCoord {
 }
 
 export class VunitCoord implements IVunitCoord{
-  gx: number = 0
-  gy: number = 0
-  gw: number = 1
-  gh: number = 1
+  @observable gx: number = 0
+  @observable gy: number = 0
+  @observable gw: number = 1
+  @observable gh: number = 1
 
   constructor(options:any={}) {
     this.gx = options.gx || 0
     this.gy = options.gy || 0
     this.gw = options.gw || 1
     this.gh = options.gh || 1
+  }
+
+  @computed get posSig() {
+    let xp = Math.pow(this.gx, 2)
+    let yp = Math.pow(this.gy, 2)
+    return xp*xp - yp*yp
   }
 
   static isSameStart(a: VunitCoord, b:VunitCoord):boolean {
@@ -54,7 +62,7 @@ export default class Vunit {
   public uid: string
   public size: VunitSize
   public get unitLen() {
-    return getters.unitLen(store.state)
+    return getters.unitLen(store)
   }
   public paper: Paper
   public vue: Object
@@ -65,6 +73,26 @@ export default class Vunit {
     this.coord = options.coord || new VunitCoord()
     this.paper = options.paper
     this._state = {}
+    this.initReactions()
+  }
+
+  public initReactions():void {
+    this.makeReaction('coord.posSig', 'coord')
+  }
+
+  protected makeReaction(p:string|Function, rPath: string) {
+    let getFn
+    getFn = p
+    if (typeof getFn === 'function') {
+      getFn = function() {return util.getVal(this, p)}
+    }
+    return reaction(
+      getFn,
+      () => {
+        // console.log('posSig changed');
+        this.refreshBy({path: rPath})
+      },
+    )
   }
 
   public draw () {
@@ -96,7 +124,9 @@ export default class Vunit {
   }
 
   public dispatch() {
-    store.commit.apply(store, arguments)
+    console.log('dispatch', arguments);
+
+    // store.commit.apply(store, arguments)
   }
 
   public refreshBy(args: Object):Vunit {
@@ -109,7 +139,7 @@ export function getSeleCoord(sele: Snap.Element): Object {
 }
 
 export function alignToVcoord(c: IEleCoord):IVunitCoord {
-  let unitLen = getters.unitLen(store.state)
+  let unitLen = getters.unitLen(store)
   return {
     gx: (c.x / unitLen) >> 0,
     gy: (c.y / unitLen) >> 0,

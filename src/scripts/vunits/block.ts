@@ -2,6 +2,7 @@ import Vunit, {VunitOptions, getSeleCoord} from './base'
 import {HSLColor, hslToHex} from '../blendoku/colors'
 import {assign, clone} from 'lodash'
 import ACTIONS from '../blendoku/actions'
+import {observable, reaction} from 'mobx'
 
 interface VBlockOptions extends VunitOptions{
   color: HSLColor
@@ -13,7 +14,7 @@ interface BlockVState {
 }
 
 export default class Block extends Vunit {
-  public color: HSLColor
+  @observable public color: HSLColor
   protected _state: BlockVState
   protected _refreshPathMap: Object
   static refreshPathMap = {
@@ -35,7 +36,12 @@ export default class Block extends Vunit {
     this._rePosition()
     this._rePaint()
   }
+  public initReactions(): void {
+    Vunit.prototype.initReactions.apply(this, arguments)
+    this.makeReaction('color.hex', 'color')
+  }
   protected _rePosition() {
+    // console.log('block _rePosition', this.uid);
     let rect = <Snap.Element>this.sele
     let sw = 1
     let c = this.coord
@@ -55,6 +61,7 @@ export default class Block extends Vunit {
 
   static redrawKeys = ['coord', 'color']
   refreshBy(payload: any) {
+    // console.log('refreshBy', payload.path)
     let {data, path} = payload
     let method:Function = this[this._refreshPathMap[path]]
     if (method) {
@@ -74,7 +81,11 @@ export default class Block extends Vunit {
     var me = this
     let onmove = function(dx, dy, x, y, e) {
       // console.log('onmove', arguments);
-      this.attr({x: x, y: y})
+      // console.log('onmove', e.offsetY, e.offsetY);
+      this.attr({x: e.offsetX, y: e.offsetY})
+      // let w = this.attr('width') >> 0
+      // let h = this.attr('height') >> 0
+      // this.attr({x: e.offsetX - w / 2, y: e.offsetY - h / 2})
     }
     let onstart = function(x, y, e) {
       // console.log('onstart', arguments);
@@ -93,16 +104,22 @@ export default class Block extends Vunit {
         dragging: false,
         dragStartCoord: null
       })
-      ACTIONS.dragBlock({
-        sender: me,
-        from: {
-          eleCoord: dsc
-        },
-        to: {
-          eleCoord: dragEndCoord
+      new Promise((resolve, reject) => {
+        ACTIONS.dragBlock({
+          sender: me,
+          from: {
+            eleCoord: dsc
+          },
+          to: {
+            eleCoord: dragEndCoord
+          },
+          defer: {resolve, reject}
+        })
+      }).then((info:any={}) => {
+        if (info.shouldRewind) {
+          this.attr(dsc)
         }
       })
-      this.attr(dsc)
     }
     this.sele.drag(onmove, onstart, onend)
   }

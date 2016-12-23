@@ -1,7 +1,9 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
-const store = require('scripts/stores/store').default
+// const store = require('scripts/stores/store').default
+// import store from 'scripts/stores/game'
+import store from 'scripts/stores/store'
 import {Blendoku} from 'scripts/blendoku/index'
 // import store from 'scripts/stores/store'
 
@@ -18,10 +20,10 @@ window.blendoku = blendoku
 window.store = store
 blendoku.start()
 
-const App = require('./App')
-new Vue({
-  el: '#app',
-  // components: { App },
-  store,
-  render: function (h) { return h(App) }
-})
+// const App = require('./App')
+// new Vue({
+//   el: '#app',
+//   // components: { App },
+//   store,
+//   render: function (h) { return h(App) }
+// })

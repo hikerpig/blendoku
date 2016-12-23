@@ -10,6 +10,6 @@ export default {
     let toCoord:IVunitCoord = alignToVcoord(to.eleCoord)
     from.coord = fromCoord
     to.coord = toCoord
-    store.commit(mts.DRAG_BLOCK_TO, {from, to, sender: payload.sender})
+    store.dragBlockTo(payload)
   }
 }

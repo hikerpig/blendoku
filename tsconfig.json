@@ -8,6 +8,7 @@
     "preserveConstEnums": true,
     "sourceMap": true,
     "allowJs": true,
+    "experimentalDecorators": true,
     "baseUrl": ".",
     "paths": {
       "snapsvg-cjs": ["node_modules/snapsvg-cjs/dist/snap.svg"],
