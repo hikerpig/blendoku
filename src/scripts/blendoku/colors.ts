@@ -1,5 +1,5 @@
 import VunitCoord from '../vunits/base'
-import {reduce, range, clone} from 'lodash'
+import {reduce, range, clone, pick} from 'lodash'
 import {observable, computed} from 'mobx'
 
 export interface IHSLColor {
@@ -12,6 +12,9 @@ export class HSLColor implements IHSLColor {
   @observable s?: number
   @observable l?: number
   @computed get hex():string { return hslToHex(this) }
+  public shallowCopy():IHSLColor {
+    return pick(this, ['h', 's', 'l'])
+  }
 }
 
 export interface RGBColor {

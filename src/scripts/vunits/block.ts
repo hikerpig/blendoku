@@ -27,7 +27,7 @@ export default class Block extends Vunit {
     this._refreshPathMap = clone(Block.refreshPathMap)
   }
   public formEle(): Snap.Element {
-    let s = this.getSnap()
+    let s = this.getGroup('block')
     let rect = s.rect(0, 0, 0, 0)
       .addClass('vu-block')
     return rect
@@ -48,7 +48,7 @@ export default class Block extends Vunit {
     let vCoord = {x: c.gx * this.unitLen, y: c.gy * this.unitLen, width: this.unitLen-2*sw, height: this.unitLen-2*sw}
     rect
       .attr(vCoord)
-      .attr({stroke: 'transparent', strokeWidth: sw})
+      .attr({stroke: 'transparent', strokeWidth: sw, zIndex: 100})
   }
   protected _rePaint() {
     let rect = <Snap.Element>this.sele

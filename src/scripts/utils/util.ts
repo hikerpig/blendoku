@@ -1,3 +1,4 @@
+import {isObject} from 'lodash'
 export function say() {
   return 'Hello'
 }
@@ -15,10 +16,12 @@ export function getVal (obj, key) {
 
   for (let i = 0; i < keyAttr.length; i++) {
     let k = keyAttr[i];
-    let val = obj[k]
-    if (val && val.hasOwnProperty(k)) {
+    if (val && isObject(val)) {
       val = val[k]
+    } else if (val !== undefined){
+      return val
     } else {
+      // console.log('not hit', k, val)
       return undefined
     }
   }

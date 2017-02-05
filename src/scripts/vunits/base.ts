@@ -58,6 +58,7 @@ export interface VunitOptions {
 export default class Vunit {
   public sele: Snap.Element
   static Snap = SnapSvg
+  static groupMap: Map<string, Paper>
   public coord: VunitCoord
   public uid: string
   public size: VunitSize
@@ -84,7 +85,7 @@ export default class Vunit {
     let getFn
     getFn = p
     if (typeof getFn === 'function') {
-      getFn = function() {return util.getVal(this, p)}
+      getFn = util.makeGetter(this, p)
     }
     return reaction(
       getFn,
@@ -111,6 +112,21 @@ export default class Vunit {
       this.paper = SnapSvg()
     }
     return this.paper
+  }
+  public getGroup(name): Paper {
+    if (!Vunit.groupMap.get(name)) {
+      Vunit.groupMap.set(name, this.getSnap().g())
+      Vunit.repositionGroups()
+    }
+    return Vunit.groupMap.get(name)
+  }
+
+  static repositionGroups() {
+    let gf = Vunit.groupMap.get('frame')
+    let gb = Vunit.groupMap.get('block')
+    if (gf && gb) {
+      gf.after(gb)
+    }
   }
 
   public setSize(size: VunitSize) {

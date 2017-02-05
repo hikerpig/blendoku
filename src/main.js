@@ -5,6 +5,7 @@ import Vue from 'vue'
 // import store from 'scripts/stores/game'
 import store from 'scripts/stores/store'
 import {Blendoku} from 'scripts/blendoku/index'
+import * as util from 'scripts/utils/util'
 // import store from 'scripts/stores/store'
 
 require('styles/app.scss')
@@ -18,6 +19,7 @@ const blendoku = new Blendoku({
 window.Vue = Vue
 window.blendoku = blendoku
 window.store = store
+
 blendoku.start()
 
 // const App = require('./App')

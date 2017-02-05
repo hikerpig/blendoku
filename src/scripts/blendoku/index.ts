@@ -1,10 +1,13 @@
 import Game, {IColorBlock} from './game'
+import Vunit from '../vunits/base'
 import VBoard from '../vunits/board'
 import VBlock from '../vunits/block'
+import VFrame from '../vunits/frame'
 import DEBUG_TOOLS from './debug'
 import * as getters from '../blendoku/getters'
 import * as SnapSvg from 'snapsvg-cjs'
 import globals from 'scripts/globals'
+import * as util from 'scripts/utils/util'
 import * as Vue from 'vue'
 import DataVue from '../watcher-vues/data-vue'
 import BlockVue from '../watcher-vues/block-vue'
@@ -22,6 +25,7 @@ export class Blendoku {
    */
   public blocks: Array<VBlock> = []
   public store: any
+  public frames: Array<VFrame> = []
   /**
    * A snap.svg paper that all child elements come from and be drawn to
    */
@@ -29,6 +33,7 @@ export class Blendoku {
   constructor(options: any) {
     this.store = options.store
     console.log(this.store);
+    Vunit.groupMap = new Map
 
     this.game = new Game({
       data: getters.data(this.getStore()),
@@ -54,6 +59,7 @@ export class Blendoku {
     this.game.loadData({
       blocks: blocks
     })
+    this.game.setRiddleByBlocks(blocks)
 
     return this
   }
@@ -92,28 +98,39 @@ export class Blendoku {
       this.blocks.push(vBlock)
 
       // console.log('new block', block.coord, block.color);
-
-      // let dv = new BlockVue({
-      //   propsData: {
-      //     data: block
-      //   }
-      // })
-      // vBlock.vue = dv
-      // dv.$on('update', (payload) => {
-      //   console.log('on update', payload);
-      //   game.updateBlock(payload)
-      //   vBlock.refreshBy(payload)
-      // })
     })
   }
 
+  protected initRiddleFrames(riddleFrames:any[]) {
+    console.log('initRiddleFrames')
+    riddleFrames.forEach((rf) => {
+      let vf = new VFrame({
+        paper: this.paper,
+        coord: rf.coord
+      })
+      vf.draw()
+      this.frames.push(vf)
+      // console.log('new block', block.coord, block.color);
+    })
+  }
   protected initStoreWatcher(store: any):void {
     reaction(
-      () => {return store.blocks.length},
+      util.makeGetter(store, 'actionCount'),
+      () => { this.game.checkGame()}
+    )
+    reaction(
+      util.makeGetter(store, 'blocks.length'),
       () => {
         let blocks  = store.blocks
-        console.log('got blocks', blocks.toJSON());
+        // console.log('got blocks', blocks.toJSON());
         this.initBlocks(blocks)
+      },
+      true
+    )
+    reaction(
+      util.makeGetter(store, 'riddleFrames.length'),
+      () => {
+        this.initRiddleFrames(store.riddleFrames)
       },
       true
     )

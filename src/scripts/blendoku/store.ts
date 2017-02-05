@@ -14,6 +14,8 @@ class BlendokuStore implements IBlendokuStore {
   @observable game: Object
   @observable config: GameConfig
   @observable blocks
+  @observable riddleFrames
+  @observable actionCount:number = 0
 
   constructor() {
     this.game = {}
@@ -22,9 +24,11 @@ class BlendokuStore implements IBlendokuStore {
         w: 15,
         h: 15
       },
-      unitLen: 40
+      unitLen: 40,
+      frameColor: 'rgba(255,255,255, 0.8)'
     }
     this.blocks = []
+    this.riddleFrames = []
   }
 
   @action
@@ -32,6 +36,11 @@ class BlendokuStore implements IBlendokuStore {
     // console.log('addBlocks', arguments);
     util.replaceArray(this.blocks, payload.blocks)
     // payload.blocks.map(blk => this.blocks.push(blk))
+  }
+  @action
+  public addRiddleFrames(payload:any) {
+    // console.log('addBlocks', arguments);
+    util.replaceArray(this.riddleFrames, payload.riddleFrames)
   }
 
   @action
@@ -62,18 +71,18 @@ class BlendokuStore implements IBlendokuStore {
       }
     }
     payload.defer.resolve(deferInfo)
+    this.actionCount++
   }
-
 }
 
 const store = new BlendokuStore
 
-const ar = autorun(
-  () => console.log(store.blocks.length),
-  () => {
-    console.log('blocks length changed', arguments);
-
-  }
-)
+// const ar = autorun(
+//   () => console.log(store.blocks.length),
+//   () => {
+//     console.log('blocks length changed', arguments);
+//
+//   }
+// )
 
 export default store

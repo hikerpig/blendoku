@@ -2,8 +2,8 @@ import Vunit, {VunitCoord, IVunitCoord} from '../vunits/base'
 import store from '../stores/store'
 import mts from './mutation-types'
 import * as COLORS from './colors'
-import {range, uniqueId, find, last} from 'lodash'
-import {ColorRange, HSLColor} from './colors'
+import {range, uniqueId, find, last, pick, clone} from 'lodash'
+import {ColorRange, HSLColor, IHSLColor} from './colors'
 import {observable, reaction, action} from 'mobx'
 import {makeGetter} from 'scripts/utils/util'
 
@@ -43,6 +43,11 @@ export class ColorBlock implements IColorBlock {
   }
 }
 
+export interface IRiddleFrame {
+  color?: IHSLColor,
+  coord?: IVunitCoord
+}
+
 export interface BoardUSize {
   w: number
   h: number
@@ -51,6 +56,7 @@ export interface BoardUSize {
 export interface GameConfig {
   boardUSize: BoardUSize
   unitLen: number
+  frameColor: string
 }
 
 export interface GameData {
@@ -134,6 +140,8 @@ export class BlockMatrix {
   }
 }
 
+
+
 /**
  * @class Game
  * 处理游戏逻辑
@@ -143,6 +151,8 @@ export default class Game {
   @observable data: GameData
   config: GameConfig
   public blockMatrix: BlockMatrix
+  private _riddleFrames:IRiddleFrame[]
+
   constructor(options:any) {
     this.data = options.data
     this.config = options.config
@@ -170,11 +180,28 @@ export default class Game {
     })
     return blocks
   }
+  static generateRiddleFrames(blocks: Array<IColorBlock>):IRiddleFrame[] {
+    // console.log('generateRiddleFrames', blocks)
+    let rFrames:IRiddleFrame[]
+    rFrames = blocks.map((blk) => {
+      return {
+        coord: <IVunitCoord>pick(blk.coord, ['gx', 'gy']),
+        color: blk.color.shallowCopy(),
+      }
+    })
+    return rFrames
+  }
   static makeCoords(start: VunitCoord, direc:string, count:number=1):Array<VunitCoord> {
     let diffs = DIRECT_DIFFS[direc]
     return range(count).map((v:number) => {
       return new VunitCoord({gx: start.gx + v*diffs[0], gy: start.gy + v*diffs[1]})
     })
+  }
+
+  public setRiddleByBlocks(blocks: Array<IColorBlock>) {
+    let riddleFrames = Game.generateRiddleFrames(blocks)
+    // this._riddleFrames = riddleFrames
+    store.addRiddleFrames({riddleFrames})
   }
 
   public updateBlock(payload) {
@@ -186,6 +213,28 @@ export default class Game {
         // TODO: need to unset prev
         this.blockMatrix.set(gx, gy, data.uid)
       } break
+    }
+  }
+  private isRiddleSatisfied(rf):boolean {
+    let block = this.blockMatrix.get(rf.coord.gx, rf.coord.gy)
+    if (block) {
+      let rc = rf.color
+      let bc = block.color
+      return (bc.h == rc.h) && (bc.s == rc.s) && (bc.l == rc.l)
+    }
+    return false
+  }
+  public checkGame() {
+    let rfs = store.riddleFrames
+    let completed = true
+    rfs.forEach((rf) => {
+      if (!this.isRiddleSatisfied(rf)) {
+        completed = false
+        return false
+      }
+    } )
+    if (completed) {
+      console.log('completed', completed)
     }
   }
 
