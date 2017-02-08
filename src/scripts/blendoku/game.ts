@@ -1,8 +1,9 @@
 import Vunit, {VunitCoord, IVunitCoord} from '../vunits/base'
 import store from '../stores/store'
+import{IBlendokuStore} from './store'
 import mts from './mutation-types'
 import * as COLORS from './colors'
-import {range, uniqueId, find, last, pick, clone} from 'lodash'
+import {range, uniqueId, find, last, pick, clone, assign} from 'lodash'
 import {ColorRange, HSLColor, IHSLColor} from './colors'
 import {observable, reaction, action} from 'mobx'
 import {makeGetter} from 'scripts/utils/util'
@@ -61,6 +62,7 @@ export interface GameConfig {
 
 export interface GameData {
   blocks?: IColorBlock[]
+  riddleFrames?: IRiddleFrame[]
 }
 
 type tMaybeBlock = ColorBlock|void
@@ -162,7 +164,11 @@ export default class Game {
     this.blockMatrix.setBlocks(this.data.blocks)
   }
   public loadData(d: GameData) {
+    console.log('loadData', d)
     store.addBlocks({blocks: d.blocks })
+    if (d.riddleFrames) {
+      store.addRiddleFrames(d)
+    }
   }
   public getBlockByCoord(c: IVunitCoord) {
     return this.blockMatrix.get(c.gx, c.gy)
@@ -237,5 +243,18 @@ export default class Game {
       console.log('completed', completed)
     }
   }
-
+  public serialize(): GameData {
+    return store.serialize()
+  }
+  static toObservables(gameData: IBlendokuStore): IBlendokuStore {
+    gameData.blocks = gameData.blocks.map((blk) => {
+      let cb = new ColorBlock(),
+        coord = cb.coord,
+        c = cb.color
+      assign(coord, blk.coord)
+      assign(c, blk.color)
+      return cb
+    })
+    return gameData
+  }
 }

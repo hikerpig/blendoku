@@ -148,6 +148,12 @@ export default class Vunit {
   public refreshBy(args: Object):Vunit {
     return this
   }
+
+  public dispose() {
+    if (this.sele) {
+      this.sele.remove()
+    }
+  }
 }
 
 export function getSeleCoord(sele: Snap.Element): Object {

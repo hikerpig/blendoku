@@ -5,11 +5,10 @@ import globals from 'scripts/globals'
 import {assign, clone} from 'lodash'
 import {observable, reaction, action, autorun} from 'mobx'
 
-interface IBlendokuStore extends GameData {
+export interface IBlendokuStore extends GameData {
   game: Object,
   config: GameConfig
 }
-
 class BlendokuStore implements IBlendokuStore {
   @observable game: Object
   @observable config: GameConfig
@@ -72,6 +71,17 @@ class BlendokuStore implements IBlendokuStore {
     }
     payload.defer.resolve(deferInfo)
     this.actionCount++
+  }
+
+  public serialize(): IBlendokuStore {
+    return JSON.parse(JSON.stringify(this))
+  }
+
+  @action
+  public clearData() {
+    util.clearArray(this.blocks)
+    util.clearArray(this.riddleFrames)
+    this.actionCount = 0
   }
 }
 

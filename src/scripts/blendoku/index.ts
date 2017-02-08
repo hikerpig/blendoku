@@ -1,4 +1,5 @@
-import Game, {IColorBlock} from './game'
+import Game, {IColorBlock, GameData} from './game'
+import {IBlendokuStore} from './store'
 import Vunit from '../vunits/base'
 import VBoard from '../vunits/board'
 import VBlock from '../vunits/block'
@@ -9,8 +10,6 @@ import * as SnapSvg from 'snapsvg-cjs'
 import globals from 'scripts/globals'
 import * as util from 'scripts/utils/util'
 import * as Vue from 'vue'
-import DataVue from '../watcher-vues/data-vue'
-import BlockVue from '../watcher-vues/block-vue'
 import {reaction, autorun} from 'mobx'
 
 /**
@@ -24,15 +23,14 @@ export class Blendoku {
    * VBlock list
    */
   public blocks: Array<VBlock> = []
-  public store: any
   public frames: Array<VFrame> = []
+  public store: any
   /**
    * A snap.svg paper that all child elements come from and be drawn to
    */
   public paper: Paper
   constructor(options: any) {
     this.store = options.store
-    console.log(this.store);
     Vunit.groupMap = new Map
 
     this.game = new Game({
@@ -55,12 +53,17 @@ export class Blendoku {
 
   public start(): Blendoku {
     let blocks = DEBUG_TOOLS.getInitialBlocks(this.game.config)
-
-    this.game.loadData({
-      blocks: blocks
+    this._start({
+      blocks
     })
     this.game.setRiddleByBlocks(blocks)
+    return this
+  }
 
+  protected _start(gameData: GameData): Blendoku {
+    // let {blocks} = gameData
+    // TODO: 如果有riddleFrames
+    this.game.loadData(gameData)
     return this
   }
 
@@ -138,5 +141,42 @@ export class Blendoku {
 
   getStore(): any {
     return this.store
+  }
+
+  public saveGame(): Promise<Object> {
+    return new Promise((resolve, reject) => {
+      let storeData = this.game.serialize()
+      localStorage.setItem('gameData', JSON.stringify(storeData))
+      resolve({})
+    })
+  }
+
+  private applyGameData(gameData: IBlendokuStore): Blendoku {
+    let storeData = Game.toObservables(gameData)
+    return this._start(storeData)
+  }
+
+  private loadGameData(): Promise<IBlendokuStore> {
+    return new Promise((resolve, reject) => {
+      let gameData
+      try {
+        gameData = JSON.parse(localStorage.getItem('gameData'))
+        console.log(gameData)
+        resolve(gameData)
+      } catch (err) {
+      }
+    })
+  }
+  public restartByCache() {
+    this.clear()
+    this.loadGameData()
+      .then((gameData) => {
+        this.applyGameData(gameData)
+      })
+  }
+  public clear() {
+    this.store.clearData()
+    this.blocks.map((vblk) => { vblk.dispose() })
+    this.frames.map((vf) => { vf.dispose() })
   }
 }

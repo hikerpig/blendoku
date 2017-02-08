@@ -1,6 +1,7 @@
 import {isObject} from 'lodash'
-export function say() {
-  return 'Hello'
+
+export function clearArray(arr) {
+  return arr.splice(0, arr.length)
 }
 
 export function replaceArray(arr:Array<any>, newarray:Array<any>):void {
