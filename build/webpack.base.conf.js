@@ -43,12 +43,6 @@ module.exports = {
   module: {
     preLoaders: [
       // {
-      //   test: /\.vue$/,
-      //   loader: 'eslint',
-      //   include: projectRoot,
-      //   exclude: /node_modules/
-      // },
-      // {
       //   test: /\.js$/,
       //   loader: 'eslint',
       //   include: projectRoot,
@@ -66,7 +60,6 @@ module.exports = {
         include: projectRoot,
         exclude: /node_modules/
       },
-      // { test: /\.ts$/, loader: 'vue-ts-loader' },
       { test: /\.ts$/, loader: 'ts-loader' },
       {
         test: /\.json$/,
@@ -96,7 +89,6 @@ module.exports = {
   vue: {
     loaders: Object.assign(
       utils.cssLoaders({ sourceMap: useCssSourceMap })
-      // {js: 'vue-ts-loader'}
     ),
     // postcss: [
     //   require('autoprefixer')({
@@ -104,7 +96,4 @@ module.exports = {
     //   })
     // ]
   },
-  ts: {
-    entryFileIsJs: true
-  }
 }

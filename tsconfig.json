@@ -3,6 +3,7 @@
     "target": "es6",
     "module": "commonjs",
     "noImplicitAny": false,
+    "moduleResolution": "node",
     "removeComments": true,
     "allowSyntheticDefaultImports": true,
     "preserveConstEnums": true,
@@ -16,10 +17,15 @@
         "*",
         "src/*"
       ]
-    }
+    },
+    "typeRoots": [
+      "node_modules/@types"
+    ]
   },
+  "lib": [ "es2015"],
   "include": [
-    "node_modules/vue/types/index.d.ts"
+    "@types/lodash/index.d.ts",
+    "src/**/*.ts"
   ],
   "exclude": [
     "node_modules",
