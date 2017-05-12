@@ -105,7 +105,7 @@ export class Blendoku {
   }
 
   protected initRiddleFrames(riddleFrames:any[]) {
-    console.log('initRiddleFrames')
+    // console.log('initRiddleFrames')
     riddleFrames.forEach((rf) => {
       let vf = new VFrame({
         paper: this.paper,
@@ -153,6 +153,7 @@ export class Blendoku {
 
   private applyGameData(gameData: IBlendokuStore): Blendoku {
     let storeData = Game.toObservables(gameData)
+    // console.log('got storeData', storeData)
     return this._start(storeData)
   }
 
@@ -161,7 +162,7 @@ export class Blendoku {
       let gameData
       try {
         gameData = JSON.parse(localStorage.getItem('gameData'))
-        console.log(gameData)
+        // console.log('gameData', gameData)
         resolve(gameData)
       } catch (err) {
       }

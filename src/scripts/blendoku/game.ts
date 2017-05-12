@@ -255,6 +255,13 @@ export default class Game {
       assign(c, blk.color)
       return cb
     })
+    gameData.riddleFrames = gameData.riddleFrames.map((rf) => {
+      let frame: IRiddleFrame = {
+        coord: rf.coord,
+        color: rf.color
+      }
+      return frame
+    })
     return gameData
   }
 }
