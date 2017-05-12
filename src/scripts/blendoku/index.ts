@@ -1,4 +1,4 @@
-import Game, {IColorBlock, GameData} from './game'
+import Game, {IColorBlock, IRiddleFrame, GameData} from './game'
 import {IBlendokuStore} from './store'
 import Vunit from '../vunits/base'
 import VBoard from '../vunits/board'
@@ -52,13 +52,23 @@ export class Blendoku {
     this.initStoreWatcher(this.store)
   }
 
-  public start(): Blendoku {
+  public start() {
+    this.startByDebug()
+  }
+
+  public startByDebug(){
     let blocks = DEBUG_TOOLS.getInitialBlocks(this.game.config)
     this._start({
       blocks
     })
     this.game.setRiddleByBlocks(blocks)
-    return this
+  }
+
+  public startByRiddleFrames(riddleFrames: IRiddleFrame[]){
+    let blocks = Game.generateBlocksByFrames(riddleFrames)
+    this.game.stageBlocks(blocks)
+    // console.log('got blocks', blocks)
+    this._start({blocks, riddleFrames})
   }
 
   protected _start(gameData: GameData): Blendoku {
@@ -67,6 +77,9 @@ export class Blendoku {
     this.game.loadData(gameData)
     return this
   }
+
+  // public stageBlocks(blocks: IColorBlock[]) {
+  // }
 
   /**
    * 根据视窗大小调整

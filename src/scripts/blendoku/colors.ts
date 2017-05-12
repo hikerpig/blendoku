@@ -12,6 +12,13 @@ export class HSLColor implements IHSLColor {
   @observable s?: number
   @observable l?: number
   @computed get hex():string { return hslToHex(this) }
+  constructor(c?: IHSLColor) {
+    if (c) {
+      this.h = c.h
+      this.s = c.s
+      this.l = c.l
+    }
+  }
   public shallowCopy():IHSLColor {
     return pick(this, ['h', 's', 'l'])
   }

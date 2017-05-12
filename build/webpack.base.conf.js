@@ -28,7 +28,9 @@ module.exports = {
     fallback: [path.join(__dirname, '../node_modules')],
     alias: {
       // 'vue': 'vue/dist/vue.js',
+      '@': path.resolve(srcPath),
       'src': srcPath,
+      'data': path.resolve(srcPath, 'data'),
       'scripts': path.resolve(srcPath, 'scripts'),
       'styles': path.resolve(srcPath, 'styles'),
       'bower_components': path.resolve(root, 'bower_components'),

@@ -6,7 +6,7 @@ import * as COLORS from './colors'
 import {range, uniqueId, find, last, pick, clone, assign} from 'lodash'
 import {ColorRange, HSLColor, IHSLColor} from './colors'
 import {observable, reaction, action} from 'mobx'
-import {makeGetter} from 'scripts/utils/util'
+import {makeGetter, shallowCopy} from 'scripts/utils/util'
 
 export const DIRECTIONS = {
   Up: 'Up',
@@ -57,6 +57,7 @@ export interface BoardUSize {
 export interface GameConfig {
   boardUSize: BoardUSize
   unitLen: number
+  stageHeight: number
   frameColor: string
 }
 
@@ -164,7 +165,7 @@ export default class Game {
     this.blockMatrix.setBlocks(this.data.blocks)
   }
   public loadData(d: GameData) {
-    console.log('loadData', d)
+    // console.log('loadData', d)
     store.addBlocks({blocks: d.blocks })
     if (d.riddleFrames) {
       store.addRiddleFrames(d)
@@ -178,11 +179,21 @@ export default class Game {
     rangeList.map((gbOpt:any) => {
       let [cr, split] = gbOpt
       COLORS.makeColorStops(cr, split).map(function (stopColor) {
-        // let block = {color: stopColor}
         let block = new ColorBlock()
         block.color = stopColor
         blocks.push(block)
       })
+    })
+    return blocks
+  }
+  static generateBlocksByFrames(frames: IRiddleFrame[]): IColorBlock[] {
+    let blocks = frames.map((fr) => {
+      let block = new ColorBlock()
+      assign(block, {
+        color: new HSLColor(fr.color),
+        coord: shallowCopy<IVunitCoord>(fr.coord, VunitCoord),
+      })
+      return block
     })
     return blocks
   }
@@ -201,6 +212,15 @@ export default class Game {
     let diffs = DIRECT_DIFFS[direc]
     return range(count).map((v:number) => {
       return new VunitCoord({gx: start.gx + v*diffs[0], gy: start.gy + v*diffs[1]})
+    })
+  }
+  public stageBlocks(blocks: IColorBlock[]): IColorBlock[] {
+    let curY = 0
+    // TODO: 超出当前页面x bound以后换行
+    return blocks.map((blk, i) => {
+      blk.coord.gx = i
+      blk.coord.gy = curY
+      return blk
     })
   }
 

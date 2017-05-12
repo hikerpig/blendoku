@@ -5,10 +5,14 @@ import Vue from 'vue'
 // import store from 'scripts/stores/game'
 import store from 'scripts/stores/store'
 import {Blendoku} from 'scripts/blendoku/index'
-import * as util from 'scripts/utils/util'
+import RiddleFactory from 'scripts/blendoku/riddle-factory'
+// import * as util from 'scripts/utils/util'
 // import store from 'scripts/stores/store'
 
 require('styles/app.scss')
+
+var gameData = RiddleFactory.test()
+// console.log('gameData', gameData)
 
 // window.store = store
 
@@ -20,7 +24,8 @@ window.Vue = Vue
 window.blendoku = blendoku
 window.store = store
 
-blendoku.start()
+// blendoku.start()
+blendoku.startByRiddleFrames(gameData.riddleFrames)
 
 // const App = require('./App')
 // new Vue({

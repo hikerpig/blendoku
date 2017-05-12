@@ -24,6 +24,7 @@ class BlendokuStore implements IBlendokuStore {
         h: 15
       },
       unitLen: 40,
+      stageHeight: 4,
       frameColor: 'rgba(255,255,255, 0.8)'
     }
     this.blocks = []
@@ -38,7 +39,7 @@ class BlendokuStore implements IBlendokuStore {
   }
   @action
   public addRiddleFrames(payload:any) {
-    // console.log('addBlocks', arguments);
+    // console.log('addRiddleFrames', payload);
     util.replaceArray(this.riddleFrames, payload.riddleFrames)
   }
 

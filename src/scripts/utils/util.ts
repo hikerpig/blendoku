@@ -1,4 +1,7 @@
-import {isObject} from 'lodash'
+import {
+  isObject,
+  each
+} from 'lodash'
 
 export function clearArray(arr) {
   return arr.splice(0, arr.length)
@@ -33,4 +36,14 @@ export function makeGetter(obj, p) {
   let fn = function() {return getVal(obj, p)}
   // console.log(fn, obj, p);
   return fn
+}
+
+export function shallowCopy<T>(o: T, ctor: {new(): T}): T {
+  let c: T = new ctor()
+  for (let k in o) {
+    if (o.hasOwnProperty(k)) {
+      c[k] = o[k]
+    }
+  }
+  return c
 }
