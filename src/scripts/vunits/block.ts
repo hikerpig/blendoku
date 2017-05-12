@@ -11,7 +11,12 @@ interface VBlockOptions extends VunitOptions{
 interface BlockVState {
   dragging: boolean
   dragStartCoord: any
+  startMouseOffset: any
 }
+
+const BLOCK_DRAGGING_CLASS = 'vu-block--dragging'
+// const BLOCK_ZINDEX_NORMAL = 100
+// const BLOCK_ZINDEX_DRAGGING = 400
 
 export default class Block extends Vunit {
   @observable public color: HSLColor
@@ -48,7 +53,7 @@ export default class Block extends Vunit {
     let vCoord = {x: c.gx * this.unitLen, y: c.gy * this.unitLen, width: this.unitLen-2*sw, height: this.unitLen-2*sw}
     rect
       .attr(vCoord)
-      .attr({stroke: 'transparent', strokeWidth: sw, zIndex: 100})
+      .attr({stroke: 'transparent', strokeWidth: sw})
   }
   protected _rePaint() {
     let rect = <Snap.Element>this.sele
@@ -82,7 +87,8 @@ export default class Block extends Vunit {
     let onmove = function(dx, dy, x, y, e) {
       // console.log('onmove', arguments);
       // console.log('onmove', e.offsetY, e.offsetY);
-      this.attr({x: e.offsetX, y: e.offsetY})
+      let dco = me._state.startMouseOffset
+      this.attr({x: e.offsetX - dco.x, y: e.offsetY - dco.y})
       // let w = this.attr('width') >> 0
       // let h = this.attr('height') >> 0
       // this.attr({x: e.offsetX - w / 2, y: e.offsetY - h / 2})
@@ -90,19 +96,28 @@ export default class Block extends Vunit {
     let onstart = function(x, y, e) {
       // console.log('onstart', arguments);
       let dsc = getSeleCoord(this)
-      // TODO: calc start mouse offset and set to state
+      let startMouseOffset = {
+        x: x - me.coord.gx * me.unitLen,
+        y: y - me.coord.gy * me.unitLen,
+      }
+      me.sele.addClass(BLOCK_DRAGGING_CLASS)
+      // me.sele.attr({'z-index': BLOCK_ZINDEX_DRAGGING})
       assign(me._state, {
         dragging: true,
-        dragStartCoord: dsc
+        dragStartCoord: dsc,
+        startMouseOffset
       })
     }
     let onend = function(e) {
       // console.log('onend', arguments);
       let dsc = me._state.dragStartCoord
       let dragEndCoord = getSeleCoord(this)
+      dragEndCoord.x += me._state.startMouseOffset.x
+      dragEndCoord.y += me._state.startMouseOffset.y
       assign(me._state, {
         dragging: false,
-        dragStartCoord: null
+        dragStartCoord: null,
+        startMouseOffset: null
       })
       new Promise((resolve, reject) => {
         ACTIONS.dragBlock({
@@ -119,6 +134,8 @@ export default class Block extends Vunit {
         if (info.shouldRewind) {
           this.attr(dsc)
         }
+        me.sele.removeClass(BLOCK_DRAGGING_CLASS)
+        // me.sele.attr({'z-index': BLOCK_ZINDEX_NORMAL})
       })
     }
     this.sele.drag(onmove, onstart, onend)

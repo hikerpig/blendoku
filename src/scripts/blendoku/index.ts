@@ -41,6 +41,7 @@ export class Blendoku {
     })
     globals.game = this.game
     let paper = SnapSvg()
+    paper.attr('version', '2.0') // svg 2.0
     let sc = SnapSvg('#main-svg')
     sc.append(paper)
     this.paper = paper

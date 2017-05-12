@@ -151,6 +151,7 @@ declare module Snap {
 
 	export interface Element {
 		constructor(): Element;
+		node: any;
 		getBBox():Object;
 		transform(tstr:string):Snap.Element;
 		parent():Snap.Element;
@@ -173,6 +174,7 @@ declare module Snap {
 		clone():Snap.Element;
 		toDefs():Snap.Element;
 		addClass(cls:string):Snap.Element;
+		removeClass(cls:string):Snap.Element;
 		pattern(x:any,y:any,width:any,height:any):Snap.Element;
 		marker(x:number,y:number,width:number,height:number,refX:number,refY:number):Snap.Element;
 		animation(attr:Object,duration:number,easing?:Function,callback?:Function):Object;

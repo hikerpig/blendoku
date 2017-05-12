@@ -156,7 +156,7 @@ export default class Vunit {
   }
 }
 
-export function getSeleCoord(sele: Snap.Element): Object {
+export function getSeleCoord(sele: Snap.Element): any {
   return {x: sele.attr('x')>>0, y: sele.attr('y')>>0}
 }
 
