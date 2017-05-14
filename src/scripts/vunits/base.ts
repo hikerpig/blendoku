@@ -66,7 +66,6 @@ export default class Vunit {
     return getters.unitLen(store)
   }
   public paper: Paper
-  public vue: Object
   protected _state: any
 
   constructor(options: VunitOptions={}) {

@@ -1,7 +1,6 @@
 import Vunit, {VunitCoord, IVunitCoord} from '../vunits/base'
 import store from '../stores/store'
 import{IBlendokuStore} from './store'
-import mts from './mutation-types'
 import * as COLORS from './colors'
 import {range, uniqueId, find, last, pick, clone, assign} from 'lodash'
 import {ColorRange, HSLColor, IHSLColor} from './colors'

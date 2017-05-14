@@ -24,10 +24,9 @@ module.exports = {
     filename: '[name].js'
   },
   resolve: {
-    extensions: ['', '.ts', '.js', '.vue'],
+    extensions: ['', '.ts', '.js'],
     fallback: [path.join(__dirname, '../node_modules')],
     alias: {
-      // 'vue': 'vue/dist/vue.js',
       '@': path.resolve(srcPath),
       'src': srcPath,
       'data': path.resolve(srcPath, 'data'),
@@ -52,10 +51,6 @@ module.exports = {
       // }
     ],
     loaders: [
-      {
-        test: /\.vue$/,
-        loader: 'vue'
-      },
       {
         test: /\.js$/,
         loader: 'babel',
@@ -87,15 +82,5 @@ module.exports = {
   },
   eslint: {
     formatter: require('eslint-friendly-formatter')
-  },
-  vue: {
-    loaders: Object.assign(
-      utils.cssLoaders({ sourceMap: useCssSourceMap })
-    ),
-    // postcss: [
-    //   require('autoprefixer')({
-    //     browsers: ['last 2 versions']
-    //   })
-    // ]
   },
 }

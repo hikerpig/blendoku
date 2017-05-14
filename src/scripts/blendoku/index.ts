@@ -9,7 +9,6 @@ import * as getters from '../blendoku/getters'
 import * as SnapSvg from 'snapsvg-cjs'
 import globals from 'scripts/globals'
 import * as util from 'scripts/utils/util'
-import * as Vue from 'vue'
 import {reaction, autorun} from 'mobx'
 
 /**

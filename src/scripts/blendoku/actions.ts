@@ -1,5 +1,4 @@
 import store from '../stores/store'
-import mts from './mutation-types'
 import {alignToVcoord, IVunitCoord} from '../vunits/base'
 
 export default {

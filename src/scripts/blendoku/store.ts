@@ -1,5 +1,4 @@
 import Game, {ColorBlock, GameData, GameConfig} from './game'
-import mts from './mutation-types'
 import * as util from '../utils/util'
 import globals from 'scripts/globals'
 import {assign, clone} from 'lodash'
