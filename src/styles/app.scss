@@ -1,17 +1,56 @@
 @import 'modules/normalize';
+@import 'modules/flex';
 
 svg {
-  width: 100vw;
   height: 100vh;
+  width: 100vw;
 }
-#app {
+
+body {
+  // color: #2c3e50;
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+  font-size: 14pt;
 }
 
 // .vu-block--dragging {
 //   z-index: 400;
 // }
+
+$theme-color: #FFFE77;
+$theme-border-color: #F8E53B;
+
+.modal {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  display: none;
+  opacity: 0;
+  transition: 0.5s ease all;
+
+  &.in {
+    display: flex;
+    opacity: 1;
+  }
+}
+
+.modal__backdrop {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: rgba(black, 0.4);
+  z-index: -1;
+}
+
+.modal__body {
+  padding: 20pt 25pt;
+  background: $theme-color;
+  // color: white;
+}
+
+.win-modal {
+  font-size: 1.5rem;
+}
