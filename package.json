@@ -10,7 +10,7 @@
     "lint": "eslint --ext .js src test/unit/specs"
   },
   "dependencies": {
-    "mobx": "^2.7.0",
+    "mobx": "^2.7.0"
   },
   "devDependencies": {
     "autoprefixer": "^6.4.0",
