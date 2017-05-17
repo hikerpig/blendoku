@@ -34,10 +34,8 @@
 
 ## RoadMap
 
-- 检测Observer的变化
-  - 融入Vue的体系中(没有暴露出来真的很尴尬...)
-  - 全局的event bus来根据uid去分发事件, EObservable
+- Mobx
 
-- EObservable
-  - 采用eventEmitter自己写一个... 兼容observable的api?
-  - 或者使用rxjs.lite 主要 Observable 和 Observer
+## TODO
+
+- IRiddleDef 中定义好初始提示的色块位置

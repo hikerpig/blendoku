@@ -2,7 +2,7 @@ import Vunit, {VunitCoord, IVunitCoord} from '../vunits/base'
 import store from '../stores/store'
 import{IBlendokuStore} from './store'
 import * as COLORS from './colors'
-import {range, uniqueId, find, last, pick, clone, assign} from 'lodash'
+import {range, uniqueId, find, last, pick, clone, assign, shuffle} from 'lodash'
 import {ColorRange, HSLColor, IHSLColor} from './colors'
 import {observable, reaction, action} from 'mobx'
 import {makeGetter, shallowCopy} from 'scripts/utils/util'
@@ -213,12 +213,21 @@ export default class Game {
       return new VunitCoord({gx: start.gx + v*diffs[0], gy: start.gy + v*diffs[1]})
     })
   }
-  public stageBlocks(blocks: IColorBlock[]): IColorBlock[] {
+  public stageBlocks(blocks: IColorBlock[], opts: any): IColorBlock[] {
     let curY = 0
-    // TODO: 超出当前页面x bound以后换行
+    let {boardSize} = opts
+    let boardW = boardSize.gx
+    if (!opts.noShuffle) {
+      blocks = shuffle(blocks)
+    }
+    // 超出当前页面x bound以后换行
     return blocks.map((blk, i) => {
-      blk.coord.gx = i
+      let gx = i % boardW
+      blk.coord.gx = gx
       blk.coord.gy = curY
+      if (gx === boardW - 1) {
+        curY++
+      }
       return blk
     })
   }

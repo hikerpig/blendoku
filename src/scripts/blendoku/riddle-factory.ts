@@ -18,7 +18,7 @@ interface IRiddlePoint {
 
 interface IFrameDef {
   from : IRiddlePoint,
-  direction: string,
+  direction?: string,
   to: any,
   split: number,
   // to : IRiddlePoint,
@@ -41,11 +41,11 @@ export default class RiddleFactory {
   static test() {
     // this.getInstance()
     console.log('riddles from data', riddles)
-    return RiddleFactory.makeGameData(riddles[0])
+    return RiddleFactory.makeGameData(riddles[0], {gx: 10, gy: 15})
   }
 
-  static makeGameData(rd: IRiddleDef) {
-    // console.log('rd', rd)
+  static makeGameData(rd: IRiddleDef, bs: IVunitCoord) {
+    // console.log('rd', rd, 'boardSize', bs)
     let riddleFrames = []
     rd.frames.map((fr) => {
       // console.log('stageHeight', store.config.stageHeight)
@@ -54,6 +54,7 @@ export default class RiddleFactory {
       let fromPos = fr.from.pos
       let fsCoord = new VunitCoord({gx: fromPos[0], gy: fromPos[1] + sh})
       // 根据 from.pos 和 direct 生成 coords
+      fr.direction = fr.direction || 'Right'
       let coords = Game.makeCoords(fsCoord, fr.direction, fr.split + 2)
       return makeColorStops(cr, fr.split).map((stopColor, i) => {
         // console.log('stopColor', stopColor)
@@ -66,5 +67,10 @@ export default class RiddleFactory {
     })
     // console.log('riddleFrames', riddleFrames)
     return {riddleFrames}
+  }
+
+  public makeGame(mgOptions: any) {
+    let riddle = riddles[mgOptions.id]
+    return RiddleFactory.makeGameData(riddle, mgOptions.boardSize)
   }
 }

@@ -1,6 +1,6 @@
 import Game, {IColorBlock, IRiddleFrame, GameData} from './game'
 import {IBlendokuStore} from './store'
-import Vunit from '../vunits/base'
+import Vunit, {IVunitCoord} from '../vunits/base'
 import VBoard from '../vunits/board'
 import VBlock from '../vunits/block'
 import VFrame from '../vunits/frame'
@@ -10,6 +10,7 @@ import * as SnapSvg from 'snapsvg-cjs'
 import globals from 'scripts/globals'
 import * as util from 'scripts/utils/util'
 import {reaction, autorun} from 'mobx'
+import RiddleFactory from 'scripts/blendoku/riddle-factory'
 
 /**
  * @class Blendoku
@@ -24,6 +25,7 @@ export class Blendoku {
   public blocks: Array<VBlock> = []
   public frames: Array<VFrame> = []
   public store: any
+  public boardSize: IVunitCoord
   /**
    * A snap.svg paper that all child elements come from and be drawn to
    */
@@ -55,6 +57,14 @@ export class Blendoku {
     this.startByDebug()
   }
 
+  public startByRiddleId(id) {
+    let gameData = RiddleFactory.getInstance().makeGame({
+      id,
+      boardSize: this.boardSize
+    })
+    this.startByRiddleFrames(gameData.riddleFrames)
+  }
+
   public startByDebug(){
     let blocks = DEBUG_TOOLS.getInitialBlocks(this.game.config)
     this._start({
@@ -65,7 +75,7 @@ export class Blendoku {
 
   public startByRiddleFrames(riddleFrames: IRiddleFrame[]){
     let blocks = Game.generateBlocksByFrames(riddleFrames)
-    this.game.stageBlocks(blocks)
+    this.game.stageBlocks(blocks, {boardSize: this.boardSize})
     // console.log('got blocks', blocks)
     this._start({blocks, riddleFrames})
   }
@@ -91,6 +101,10 @@ export class Blendoku {
     }
     this.board.draw()
     this.board.setSize({width: bodyRect.width, height: bodyRect.height})
+    this.boardSize = {
+      gx: (bodyRect.width / this.store.config.unitLen) >> 0,
+      gy: (bodyRect.height / this.store.config.unitLen) >> 0,
+    }
   }
 
   /**

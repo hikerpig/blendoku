@@ -4,13 +4,11 @@
 // import store from 'scripts/stores/game'
 import store from 'scripts/stores/store'
 import {Blendoku} from 'scripts/blendoku/index'
-import RiddleFactory from 'scripts/blendoku/riddle-factory'
+// import RiddleFactory from 'scripts/blendoku/riddle-factory'
 // import * as util from 'scripts/utils/util'
 // import store from 'scripts/stores/store'
 
 require('styles/app.scss')
-
-var gameData = RiddleFactory.test()
 
 // window.store = store
 
@@ -21,5 +19,6 @@ const blendoku = new Blendoku({
 window.blendoku = blendoku
 window.store = store
 
+blendoku.startByRiddleId(0)
 // blendoku.start()
-blendoku.startByRiddleFrames(gameData.riddleFrames)
+// blendoku.startByRiddleFrames(gameData.riddleFrames)
