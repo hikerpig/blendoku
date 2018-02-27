@@ -4,8 +4,6 @@
 
 就这个游戏而言似乎不用svg库，但是最好框架搭好了以后尝试更复杂的grid based game
 
-如果和vue 的结合太痛苦... 可以考虑下vue部分还是用js写... 稳定了再改ts。 这时就需要单独的一个game store去处理与vuex 的交互
-
 ### GameController (Blendoku)
 需要和其他层连接的部分, GameController
 
@@ -19,7 +17,6 @@
 ### 数据层
 
 请求不多，异步事件也不多
-- vuex  为了响应式调试之类的
 - action 在操作store的时候如何影响 game ?
 
 ### 数据

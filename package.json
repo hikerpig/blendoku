@@ -9,9 +9,6 @@
     "build": "node build/build.js",
     "lint": "eslint --ext .js src test/unit/specs"
   },
-  "dependencies": {
-    "mobx": "^2.7.0"
-  },
   "devDependencies": {
     "autoprefixer": "^6.4.0",
     "babel-core": "^6.0.0",
@@ -41,6 +38,7 @@
     "json-loader": "^0.5.4",
     "lodash": "^4.0.0",
     "lolex": "^1.4.0",
+    "mobx": "^2.7.0",
     "node-sass": "^4.0.0",
     "opn": "^4.0.2",
     "ora": "^0.3.0",
@@ -48,8 +46,9 @@
     "semver": "^5.3.0",
     "shelljs": "^0.7.4",
     "snapsvg-cjs": "0.0.4",
+    "style-loader": "^0.20.2",
     "ts-loader": "^2.0.3",
-    "typescript": "^2.0.3",
+    "typescript": "^2.7.2",
     "url-loader": "^0.5.7",
     "webpack": "^1.13.2",
     "webpack-dev-middleware": "^1.8.3",

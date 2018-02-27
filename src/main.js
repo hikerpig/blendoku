@@ -8,7 +8,7 @@ import {Blendoku} from 'scripts/blendoku/index'
 // import * as util from 'scripts/utils/util'
 // import store from 'scripts/stores/store'
 
-require('styles/app.scss')
+require('./styles/app.scss')
 
 // window.store = store
 

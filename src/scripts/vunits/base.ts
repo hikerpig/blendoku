@@ -4,7 +4,7 @@ import {assign, uniqueId} from 'lodash'
 import store from 'scripts/stores/store'
 import * as getters from '../blendoku/getters'
 import {observable, reaction, computed} from 'mobx'
-import util from 'scripts/utils/util'
+import { makeGetter } from 'scripts/utils/util'
 
 export interface IVunitCoord {
   gx: number
@@ -84,7 +84,7 @@ export default class Vunit {
     let getFn
     getFn = p
     if (typeof getFn === 'function') {
-      getFn = util.makeGetter(this, p)
+      getFn = makeGetter(this, p)
     }
     return reaction(
       getFn,
