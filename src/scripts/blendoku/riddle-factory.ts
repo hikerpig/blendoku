@@ -7,7 +7,8 @@ import {
 import Game, {IColorBlock, DIRECTIONS, GameConfig, IRiddleFrame} from './game'
 import Vunit, {VunitCoord, IVunitCoord} from '../vunits/base'
 import {
-  assign
+  assign,
+  reduce,
 } from 'lodash'
 import store from 'scripts/stores/store'
 
@@ -24,8 +25,11 @@ interface IFrameDef {
   // to : IRiddlePoint,
 }
 
+type FrameCuePos = number[]
+
 interface IRiddleDef {
   frames: IFrameDef[]
+  cuePosList: FrameCuePos[]
   // frames: {[key: string]: any}
   // frames: {[key: string]: IRiddleDef}
 }
@@ -47,7 +51,18 @@ export default class RiddleFactory {
   static makeGameData(rd: IRiddleDef, bs: IVunitCoord) {
     // console.log('rd', rd, 'boardSize', bs)
     let riddleFrames = []
-    rd.frames.map((fr) => {
+    const cues = []
+    let cueMap = {}
+    if (rd.cuePosList) {
+      cueMap = reduce(rd.cuePosList, (m, [r, c]) => {
+        if (!m[r]) {
+          m[r] = []
+        }
+        m[r].push(c)
+        return m
+      }, {})
+    }
+    rd.frames.map((fr, i) => {
       // console.log('stageHeight', store.config.stageHeight)
       let sh = store.config.stageHeight
       let cr = makeColorRange(fr.from.color, fr.to.color)
@@ -56,17 +71,26 @@ export default class RiddleFactory {
       // 根据 from.pos 和 direct 生成 coords
       fr.direction = fr.direction || 'Right'
       let coords = Game.makeCoords(fsCoord, fr.direction, fr.split + 2)
-      return makeColorStops(cr, fr.split).map((stopColor, i) => {
+      const rfs = makeColorStops(cr, fr.split).map((stopColor, i) => {
         // console.log('stopColor', stopColor)
-        let riddleFrame: IRiddleFrame = {
+        const riddleFrame: IRiddleFrame = {
           coord: coords[i],
           color: stopColor,
         }
-        riddleFrames.push(riddleFrame)
+        return riddleFrame
       })
+      riddleFrames = riddleFrames.concat(rfs)
+
+      if (cueMap[i]) {
+        cueMap[i].map((pos, j) => {
+          if (rfs[pos]) {
+            cues.push(riddleFrames.indexOf(rfs[pos]))
+          }
+        })
+      }
     })
-    // console.log('riddleFrames', riddleFrames)
-    return {riddleFrames}
+    // console.log('riddleFrames', riddleFrames, cues)
+    return {riddleFrames, cues}
   }
 
   public makeGame(mgOptions: any) {

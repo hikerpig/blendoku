@@ -29,6 +29,7 @@ export const DIRECT_DIFFS = {
 export interface IColorBlock {
   color: HSLColor,
   coord?: VunitCoord
+  riddleFrame?: IRiddleFrame
 }
 
 export class ColorBlock implements IColorBlock {
@@ -63,6 +64,7 @@ export interface GameConfig {
 export interface GameData {
   blocks?: IColorBlock[]
   riddleFrames?: IRiddleFrame[]
+  cues?: Array<number[]>
 }
 
 type tMaybeBlock = ColorBlock|void
@@ -164,7 +166,7 @@ export default class Game {
     this.blockMatrix.setBlocks(this.data.blocks)
   }
   public loadData(d: GameData) {
-    // console.log('loadData', d)
+    console.log('loadData', d)
     store.addBlocks({blocks: d.blocks })
     if (d.riddleFrames) {
       store.addRiddleFrames(d)
@@ -187,10 +189,11 @@ export default class Game {
   }
   static generateBlocksByFrames(frames: IRiddleFrame[]): IColorBlock[] {
     let blocks = frames.map((fr) => {
-      let block = new ColorBlock()
+      const block = new ColorBlock()
       assign(block, {
         color: new HSLColor(fr.color),
         coord: shallowCopy<IVunitCoord>(fr.coord, VunitCoord),
+        riddleFrame: fr
       })
       return block
     })
@@ -233,22 +236,33 @@ export default class Game {
   }
 
   public setRiddleByBlocks(blocks: Array<IColorBlock>) {
-    let riddleFrames = Game.generateRiddleFrames(blocks)
+    const riddleFrames = Game.generateRiddleFrames(blocks)
     // this._riddleFrames = riddleFrames
     store.addRiddleFrames({riddleFrames})
   }
 
-  public updateBlock(payload) {
-    let {data, path} = payload
-    // console.log('update block', path, data);
-    switch (path) {
-      case 'coord': {
-        let {gx, gy} = data.coord
-        // TODO: need to unset prev
-        this.blockMatrix.set(gx, gy, data.uid)
-      } break
-    }
+  applyCues(cues: number[]) {
+    cues.map((pos) => {
+      const blk = this.data.blocks[pos]
+      // console.log('block for cue', blk);
+      if (blk && blk.riddleFrame) {
+        const rf = blk.riddleFrame
+        assign(blk.coord, rf.coord)
+      }
+    })
   }
+
+  // public updateBlock(payload) {
+  //   let {data, path} = payload
+  //   // console.log('update block', path, data);
+  //   switch (path) {
+  //     case 'coord': {
+  //       let {gx, gy} = data.coord
+  //       // TODO: need to unset prev
+  //       this.blockMatrix.set(gx, gy, data.uid)
+  //     } break
+  //   }
+  // }
   private isRiddleSatisfied(rf):boolean {
     let block = this.blockMatrix.get(rf.coord.gx, rf.coord.gy)
     if (block) {

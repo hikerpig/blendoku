@@ -58,11 +58,15 @@ export class Blendoku {
   }
 
   public startByRiddleId(id) {
-    let gameData = RiddleFactory.getInstance().makeGame({
+    const gameData = RiddleFactory.getInstance().makeGame({
       id,
       boardSize: this.boardSize
     })
     this.startByRiddleFrames(gameData.riddleFrames)
+
+    if (gameData.cues) {
+      this.game.applyCues(gameData.cues)
+    }
   }
 
   public startByDebug(){
@@ -74,7 +78,7 @@ export class Blendoku {
   }
 
   public startByRiddleFrames(riddleFrames: IRiddleFrame[]){
-    let blocks = Game.generateBlocksByFrames(riddleFrames)
+    const blocks = Game.generateBlocksByFrames(riddleFrames)
     this.game.stageBlocks(blocks, {boardSize: this.boardSize})
     // console.log('got blocks', blocks)
     this._start({blocks, riddleFrames})
