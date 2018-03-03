@@ -1,10 +1,10 @@
-import Vunit, {VunitOptions, getSeleCoord} from './base'
-import {HSLColor, hslToHex} from '../blendoku/colors'
-import {assign, clone} from 'lodash'
-import ACTIONS from '../blendoku/actions'
-import {observable, reaction} from 'mobx'
+import Vunit, { VunitOptions, getSeleCoord } from "./base"
+import { HSLColor, hslToHex } from "../blendoku/colors"
+import { assign, clone } from "lodash"
+import ACTIONS from "../blendoku/actions"
+import { observable, reaction } from "mobx"
 
-interface VBlockOptions extends VunitOptions{
+interface VBlockOptions extends VunitOptions {
   color: HSLColor
 }
 
@@ -14,7 +14,7 @@ interface BlockVState {
   startMouseOffset: any
 }
 
-const BLOCK_DRAGGING_CLASS = 'vu-block--dragging'
+const BLOCK_DRAGGING_CLASS = "vu-block--dragging"
 // const BLOCK_ZINDEX_NORMAL = 100
 // const BLOCK_ZINDEX_DRAGGING = 400
 
@@ -23,8 +23,8 @@ export default class Block extends Vunit {
   protected _state: BlockVState
   protected _refreshPathMap: Object
   static refreshPathMap = {
-    coord: '_rePosition',
-    color: '_rePaint',
+    coord: "_rePosition",
+    color: "_rePaint"
   }
   constructor(options: VBlockOptions) {
     super(options)
@@ -32,9 +32,8 @@ export default class Block extends Vunit {
     this._refreshPathMap = clone(Block.refreshPathMap)
   }
   public formEle(): Snap.Element {
-    let s = this.getGroup('block')
-    let rect = s.rect(0, 0, 0, 0)
-      .addClass('vu-block')
+    let s = this.getGroup("block")
+    let rect = s.rect(0, 0, 0, 0).addClass("vu-block")
     return rect
   }
   public redraw() {
@@ -43,32 +42,41 @@ export default class Block extends Vunit {
   }
   public initReactions(): void {
     Vunit.prototype.initReactions.apply(this, arguments)
-    this.makeReaction('color.hex', 'color')
+    this.makeReaction("color.hex", "color")
   }
   protected _rePosition() {
     // console.log('block _rePosition', this.uid);
     let rect = <Snap.Element>this.sele
-    let sw = 1
+    let sw = this.blockStrokeWidth
     let c = this.coord
-    let vCoord = {x: c.gx * this.unitLen, y: c.gy * this.unitLen, width: this.unitLen-2*sw, height: this.unitLen-2*sw}
-    rect
-      .attr(vCoord)
-      .attr({stroke: 'transparent', strokeWidth: sw})
+    let vCoord = {
+      x: c.gx * this.unitLen,
+      y: c.gy * this.unitLen,
+      // width: this.unitLen - 2 * sw,
+      // height: this.unitLen - 2 * sw
+      width: this.unitLen,
+      height: this.unitLen
+    }
+    rect.attr(vCoord).attr({
+      stroke: "transparent",
+      strokeWidth: sw,
+      rx: this.blockRadius,
+    })
   }
   protected _rePaint() {
     let rect = <Snap.Element>this.sele
-    var cStr:String = 'transparent'
+    var cStr: String = "transparent"
     if (this.color) {
       cStr = hslToHex(this.color)
     }
-    rect.attr({fill: cStr})
+    rect.attr({ fill: cStr })
   }
 
-  static redrawKeys = ['coord', 'color']
+  static redrawKeys = ["coord", "color"]
   refreshBy(payload: any) {
     // console.log('refreshBy', payload.path)
-    let {data, path} = payload
-    let method:Function = this[this._refreshPathMap[path]]
+    let { data, path } = payload
+    let method: Function = this[this._refreshPathMap[path]]
     if (method) {
       method.apply(this, payload)
     }
@@ -88,7 +96,7 @@ export default class Block extends Vunit {
       // console.log('onmove', arguments);
       // console.log('onmove', e.offsetY, e.offsetY);
       let dco = me._state.startMouseOffset
-      this.attr({x: e.offsetX - dco.x, y: e.offsetY - dco.y})
+      this.attr({ x: e.offsetX - dco.x, y: e.offsetY - dco.y })
       // let w = this.attr('width') >> 0
       // let h = this.attr('height') >> 0
       // this.attr({x: e.offsetX - w / 2, y: e.offsetY - h / 2})
@@ -98,7 +106,7 @@ export default class Block extends Vunit {
       let dsc = getSeleCoord(this)
       let startMouseOffset = {
         x: x - me.coord.gx * me.unitLen,
-        y: y - me.coord.gy * me.unitLen,
+        y: y - me.coord.gy * me.unitLen
       }
       me.sele.addClass(BLOCK_DRAGGING_CLASS)
       // me.sele.attr({'z-index': BLOCK_ZINDEX_DRAGGING})
@@ -128,9 +136,9 @@ export default class Block extends Vunit {
           to: {
             eleCoord: dragEndCoord
           },
-          defer: {resolve, reject}
+          defer: { resolve, reject }
         })
-      }).then((info:any={}) => {
+      }).then((info: any = {}) => {
         if (info.shouldRewind) {
           this.attr(dsc)
         }

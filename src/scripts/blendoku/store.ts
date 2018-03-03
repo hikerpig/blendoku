@@ -22,7 +22,9 @@ class BlendokuStore implements IBlendokuStore {
         w: 15,
         h: 15
       },
-      unitLen: 40,
+      blockStrokeWidth:  2,
+      blockRadius: 4,
+      unitLen: 80,
       stageHeight: 4,
       frameColor: 'rgba(255,255,255, 0.8)'
     }

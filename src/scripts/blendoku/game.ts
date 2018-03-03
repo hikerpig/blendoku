@@ -56,6 +56,8 @@ export interface BoardUSize {
 
 export interface GameConfig {
   boardUSize: BoardUSize
+  blockStrokeWidth: number
+  blockRadius: number
   unitLen: number
   stageHeight: number
   frameColor: string

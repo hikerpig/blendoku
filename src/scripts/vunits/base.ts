@@ -62,11 +62,18 @@ export default class Vunit {
   public coord: VunitCoord
   public uid: string
   public size: VunitSize
-  public get unitLen() {
-    return getters.unitLen(store)
-  }
   public paper: Paper
   protected _state: any
+
+  get unitLen() {
+    return store.config.unitLen
+  }
+  get blockStrokeWidth() {
+    return store.config.blockStrokeWidth
+  }
+  get blockRadius() {
+    return store.config.blockRadius
+  }
 
   constructor(options: VunitOptions={}) {
     this.uid = uniqueId()
