@@ -1,20 +1,16 @@
 @import 'modules/normalize';
 @import 'modules/flex';
 
-svg {
-  height: 100vh;
-  width: 100vw;
-}
+// svg {
+//   height: 100vh;
+//   width: 100vw;
+// }
 
 body {
-  // color: #2c3e50;
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   font-size: 14pt;
+  overflow: hidden;
 }
-
-// .vu-block--dragging {
-//   z-index: 400;
-// }
 
 $theme-color: #FFFE77;
 $theme-border-color: #F8E53B;

@@ -97,6 +97,7 @@ export class Blendoku {
    * @method resizeToFit
    */
   public resizeToFit() {
+    // const bRect = window.document.documentElement.getBoundingClientRect()
     let bodyRect = {
       width: window.innerWidth,
       height: window.innerHeight
@@ -107,6 +108,11 @@ export class Blendoku {
       gx: (bodyRect.width / this.store.config.unitLen) >> 0,
       gy: (bodyRect.height / this.store.config.unitLen) >> 0,
     }
+
+    this.paper.attr({
+      width: bodyRect.width,
+      height: bodyRect.height,
+    })
   }
 
   /**
@@ -148,7 +154,12 @@ export class Blendoku {
   protected initStoreWatcher(store: any):void {
     reaction(
       util.makeGetter(store, 'actionCount'),
-      () => { this.game.checkGame()}
+      () => {
+        const { completed } = this.game.checkGame()
+        if (completed) {
+          this.toggleWinModal(true)
+        }
+      }
     )
     reaction(
       util.makeGetter(store, 'blocks.length'),
@@ -208,5 +219,13 @@ export class Blendoku {
     this.store.clearData()
     this.blocks.map((vblk) => { vblk.dispose() })
     this.frames.map((vf) => { vf.dispose() })
+  }
+
+  // 额外的视图
+  toggleWinModal(show: boolean) {
+    const modal = document.querySelector('.win-modal')
+    if (modal) {
+      modal.classList[show ? 'add': 'remove']('in')
+    }
   }
 }

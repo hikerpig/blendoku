@@ -286,6 +286,9 @@ export default class Game {
     if (completed) {
       console.log('completed', completed)
     }
+    return {
+      completed
+    }
   }
   public serialize(): GameData {
     return store.serialize()
