@@ -124,7 +124,7 @@ export default class Vunit {
   }
   public getGroup(name): Paper {
     if (!Vunit.groupMap.get(name)) {
-      Vunit.groupMap.set(name, this.getSnap().g())
+      Vunit.groupMap.set(name, this.getSnap().g({ name }))
       Vunit.repositionGroups()
     }
     return Vunit.groupMap.get(name)

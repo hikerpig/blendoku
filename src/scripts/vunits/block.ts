@@ -33,6 +33,7 @@ export default class Block extends Vunit {
   public formEle(): Snap.Element {
     let s = this.getGroup("block")
     let rect = s.rect(0, 0, 0, 0).addClass("vu-block")
+    rect.attr({ uid: this.uid })
     return rect
   }
   public redraw() {
@@ -108,8 +109,11 @@ export default class Block extends Vunit {
         y: y - me.coord.gy * me.unitLen
       }
       me.sele.addClass(BLOCK_DRAGGING_CLASS)
-      // me.paper.
-      // me.paper.toF
+
+      // 确保正在 dragging 的元素一定在最上层
+      const parent = me.sele.parent()
+      parent.append(me.sele)
+
       // me.sele.attr({'z-index': BLOCK_ZINDEX_DRAGGING})
       assign(me._state, {
         dragging: true,
