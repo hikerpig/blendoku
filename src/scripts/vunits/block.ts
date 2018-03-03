@@ -1,7 +1,6 @@
-import Vunit, { VunitOptions, getSeleCoord } from "./base"
+import Vunit, { VunitOptions, getSeleCoord, alignToVcoord } from "./base"
 import { HSLColor, hslToHex } from "../blendoku/colors"
 import { assign, clone } from "lodash"
-import ACTIONS from "../blendoku/actions"
 import { observable, reaction } from "mobx"
 
 interface VBlockOptions extends VunitOptions {
@@ -109,6 +108,8 @@ export default class Block extends Vunit {
         y: y - me.coord.gy * me.unitLen
       }
       me.sele.addClass(BLOCK_DRAGGING_CLASS)
+      // me.paper.
+      // me.paper.toF
       // me.sele.attr({'z-index': BLOCK_ZINDEX_DRAGGING})
       assign(me._state, {
         dragging: true,
@@ -128,13 +129,18 @@ export default class Block extends Vunit {
         startMouseOffset: null
       })
       new Promise((resolve, reject) => {
-        ACTIONS.dragBlock({
+        const fromCoord = alignToVcoord(dsc)
+        const toCoord = alignToVcoord(dragEndCoord)
+
+        me.store.dragBlockTo({
           sender: me,
           from: {
-            eleCoord: dsc
+            eleCoord: dsc,
+            coord: fromCoord,
           },
           to: {
-            eleCoord: dragEndCoord
+            eleCoord: dragEndCoord,
+            coord: toCoord,
           },
           defer: { resolve, reject }
         })

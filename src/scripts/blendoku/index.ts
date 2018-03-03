@@ -1,11 +1,10 @@
 import Game, {IColorBlock, IRiddleFrame, GameData} from './game'
-import {IBlendokuStore} from './store'
+import {IBlendokuStore, BlendokuStore} from './store'
 import Vunit, {IVunitCoord} from '../vunits/base'
 import VBoard from '../vunits/board'
 import VBlock from '../vunits/block'
 import VFrame from '../vunits/frame'
 import DEBUG_TOOLS from './debug'
-import * as getters from '../blendoku/getters'
 import * as SnapSvg from 'snapsvg-cjs'
 import globals from 'scripts/globals'
 import * as util from 'scripts/utils/util'
@@ -34,11 +33,10 @@ export class Blendoku {
     this.store = options.store
     Vunit.groupMap = new Map
 
+    const store = this.getStore()
     this.game = new Game({
-      data: getters.data(this.getStore()),
-      config: getters.config(this.getStore())
-      // data: getters.data(this.getStore().state),
-      // config: getters.config(this.getStore().state)
+      data: store,
+      config: store.config,
     })
     globals.game = this.game
     let paper = SnapSvg()
@@ -170,7 +168,7 @@ export class Blendoku {
     )
   }
 
-  getStore(): any {
+  getStore(): BlendokuStore {
     return this.store
   }
 

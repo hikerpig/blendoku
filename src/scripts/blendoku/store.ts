@@ -8,7 +8,7 @@ export interface IBlendokuStore extends GameData {
   game: Object,
   config: GameConfig
 }
-class BlendokuStore implements IBlendokuStore {
+export class BlendokuStore implements IBlendokuStore {
   @observable game: Object
   @observable config: GameConfig
   @observable blocks
@@ -60,13 +60,10 @@ class BlendokuStore implements IBlendokuStore {
       assign(tBlock.color, fColor)
       assign(fBlock.color, tColor)
       deferInfo.shouldRewind = true
-      // let tCoord = clone(to.coord)
-      // let fCoord = clone(from.coord)
-      // assign(fBlock.coord, tCoord)
-      // assign(tBlock.coord, fCoord)
     } else {
       if (!fBlock) {
         console.log('no fBlock from', from.coord);
+        deferInfo.shouldRewind = true
       } else {
         assign(fBlock.coord, clone(to.coord))
       }

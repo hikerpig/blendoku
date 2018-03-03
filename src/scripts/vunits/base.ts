@@ -1,8 +1,7 @@
 /// <reference path="../../../typings/custom/snapsvg-cjs/index.d.ts" />
 import * as SnapSvg from 'snapsvg-cjs'
 import {assign, uniqueId} from 'lodash'
-import store from 'scripts/stores/store'
-import * as getters from '../blendoku/getters'
+import store, { BlendokuStore } from 'scripts/stores/store'
 import {observable, reaction, computed} from 'mobx'
 import { makeGetter } from 'scripts/utils/util'
 
@@ -64,6 +63,10 @@ export default class Vunit {
   public size: VunitSize
   public paper: Paper
   protected _state: any
+
+  get store() {
+    return store
+  }
 
   get unitLen() {
     return store.config.unitLen
@@ -167,7 +170,7 @@ export function getSeleCoord(sele: Snap.Element): any {
 }
 
 export function alignToVcoord(c: IEleCoord):IVunitCoord {
-  let unitLen = getters.unitLen(store)
+  let unitLen = store.config.unitLen
   return {
     gx: (c.x / unitLen) >> 0,
     gy: (c.y / unitLen) >> 0,
