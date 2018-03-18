@@ -14,7 +14,7 @@ export default class Frame extends Vunit {
 
   protected _rePosition() {
     // console.log('frame _rePosition', this.uid);
-    let rect = <Snap.Element>this.sele
+    let rect = this.sele as Snap.Element
     let sw = this.blockStrokeWidth
     let c = this.coord
     let vCoord = {

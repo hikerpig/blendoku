@@ -14,5 +14,15 @@ export const riddles = [
       [4, 3],
       [4, 1],
     ]
-  }
+  },
+  {
+    frames: [
+      {from: {pos: [0, 1], color: 'HSL(0, 26%, 41%)'}, split: 1, to: {color: 'HSL(47, 60%, 30%)'}},
+      // {from: {pos: [0, 1], color: 'HSL(0, 26%, 41%)'}, split: 1, to: {color: 'HSL(105, 9%, 73%)'}, direction: 'Down'},
+      // {from: {pos: [0, 3], color: 'HSL(105, 9%, 73%)'}, split: 2, to: {color: 'HSL(160, 100%, 33%)'}},
+    ],
+    cuePosList: [
+      [0, 1],
+    ]
+  },
 ]

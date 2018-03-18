@@ -15,6 +15,5 @@ const blendoku = new Blendoku({
 window.blendoku = blendoku
 window.store = store
 
-blendoku.startByRiddleId(0)
-// blendoku.start()
+blendoku.startByRiddleId(1)
 // blendoku.startByRiddleFrames(gameData.riddleFrames)

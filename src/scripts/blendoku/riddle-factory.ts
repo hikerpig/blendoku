@@ -2,7 +2,9 @@ import {riddles} from 'data/riddles'
 import {
   makeColorRange,
   makeColorStops,
-  makeHsl
+  makeHsl,
+  CSSHslString,
+  HSLColor,
 } from './colors'
 import Game, {IColorBlock, DIRECTIONS, GameConfig, IRiddleFrame} from './game'
 import Vunit, {VunitCoord, IVunitCoord} from '../vunits/base'
@@ -14,7 +16,7 @@ import store from 'scripts/stores/store'
 
 interface IRiddlePoint {
   pos: number[],
-  color: number[]
+  color: number[] | CSSHslString
 }
 
 interface IFrameDef {

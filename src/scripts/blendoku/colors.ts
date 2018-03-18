@@ -2,6 +2,8 @@ import VunitCoord from '../vunits/base'
 import {reduce, range, clone, pick} from 'lodash'
 import {observable, computed} from 'mobx'
 
+export type CSSHslString = string
+
 export interface IHSLColor {
   h?: number,
   s?: number,
@@ -19,6 +21,17 @@ export class HSLColor implements IHSLColor {
       this.l = c.l
     }
   }
+  static fromCssHslString(str: CSSHslString) {
+    const colorStr = /hsl\((.*)\)/i.exec(str)[1]
+    if (!colorStr) return null
+    const pcs = colorStr.split(',').map(s => parseInt(s))
+    return new HSLColor({
+      h: pcs[0],
+      s: pcs[1],
+      l: pcs[2]
+    })
+  }
+
   public shallowCopy():IHSLColor {
     return pick(this, ['h', 's', 'l'])
   }
@@ -38,6 +51,20 @@ export function makeHsl(h: number, s: number, l:number): HSLColor {
   return hsl
 }
 
+type ColorDesc = number[] | CSSHslString
+
+function parseToHsl(input: ColorDesc): HSLColor {
+  let output: HSLColor
+  if (typeof input === 'string') {
+    output = HSLColor.fromCssHslString(input)
+  } else {
+    output = makeHsl.apply(null, input)
+  }
+  console.log('output color', output);
+
+  return output
+}
+
 export function hslToHex(c: HSLColor): string {
   return rgbToHex(hslToRgb(c))
 }
@@ -47,10 +74,10 @@ export interface ColorRange {
   end: HSLColor
 }
 
-export function makeColorRange(sa: number[], ea: number[]): ColorRange {
+export function makeColorRange(sa: ColorDesc, ea: ColorDesc): ColorRange {
   return {
-    start: makeHsl.apply(null, sa),
-    end: makeHsl.apply(null, ea),
+    start: parseToHsl(sa),
+    end: parseToHsl(ea),
   }
 }
 
@@ -58,8 +85,20 @@ export function nToHex(n: number):string {
   return n.toString(16)
 }
 
+function padLeft(input, minLen, padChar = '0') {
+  const inputStr = input.toString()
+  if (inputStr.length < minLen) {
+    const padStr = new Array(minLen - inputStr.length).fill(padChar).join('')
+    return padStr + inputStr
+  }
+  return inputStr
+}
+
 export function rgbToHex(c: RGBColor):string {
-  return `#${nToHex(c.r)}${nToHex(c.g)}${nToHex(c.b)}`
+  const hex = [c.r, c.g, c.b].map((num) => {
+    return padLeft(nToHex(num), 2)
+  }).join('')
+  return `#${hex}`
 }
 
 export function hslToRgb(c: HSLColor): RGBColor {
