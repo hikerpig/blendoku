@@ -30,17 +30,20 @@ export interface IColorBlock {
   color: HSLColor,
   coord?: VunitCoord
   riddleFrame?: IRiddleFrame
+  isPinned: boolean
 }
 
 export class ColorBlock implements IColorBlock {
   public uid: string
   @observable color: HSLColor
   @observable coord?: VunitCoord
+  @observable isPinned: boolean
 
   constructor() {
     this.uid = uniqueId()
     this.coord = new VunitCoord()
     this.color = new HSLColor()
+    this.isPinned = false
   }
 }
 
@@ -80,7 +83,7 @@ export class BlockMatrix {
   /**
    * Key 为 uid, value 为坐标数组
    */
-  protected _posCache: Object
+  protected _posCache: {[key: string]: ColorBlock[] | void}
   constructor(options: any) {
     this.config = options.config
     this._posCache = {}
@@ -246,10 +249,10 @@ export default class Game {
   applyCues(cues: number[]) {
     cues.map((pos) => {
       const blk = this.data.blocks[pos]
-      // console.log('block for cue', blk);
       if (blk && blk.riddleFrame) {
         const rf = blk.riddleFrame
         assign(blk.coord, rf.coord)
+        blk.isPinned = true
       }
     })
   }

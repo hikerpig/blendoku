@@ -129,8 +129,9 @@ export class Blendoku {
     blocks.forEach((block) => {
       let vBlock = new VBlock({
         paper: this.paper,
-        color: block.color,
-        coord: block.coord
+        // color: block.color,
+        coord: block.coord,
+        colorBlock: block,
       })
       vBlock.draw()
       this.blocks.push(vBlock)
@@ -164,6 +165,7 @@ export class Blendoku {
     reaction(
       util.makeGetter(store, 'blocks.length'),
       () => {
+        // console.log('blocks length changed');
         let blocks  = store.blocks
         // console.log('got blocks', blocks.toJSON());
         this.initBlocks(blocks)

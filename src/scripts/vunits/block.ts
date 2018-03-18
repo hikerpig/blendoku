@@ -2,9 +2,11 @@ import Vunit, { VunitOptions, getSeleCoord, alignToVcoord } from "./base"
 import { HSLColor, hslToHex } from "../blendoku/colors"
 import { assign, clone } from "lodash"
 import { observable, reaction } from "mobx"
+import { IColorBlock } from "scripts/blendoku/game"
 
 interface VBlockOptions extends VunitOptions {
-  color: HSLColor
+  // color: HSLColor
+  colorBlock: IColorBlock
 }
 
 interface BlockVState {
@@ -17,18 +19,25 @@ const BLOCK_DRAGGING_CLASS = "vu-block--dragging"
 // const BLOCK_ZINDEX_NORMAL = 100
 // const BLOCK_ZINDEX_DRAGGING = 400
 
-export default class Block extends Vunit {
-  @observable public color: HSLColor
+export default class VBlock extends Vunit {
+  @observable colorBlock: IColorBlock
   protected _state: BlockVState
   protected _refreshPathMap: Object
   static refreshPathMap = {
     coord: "_rePosition",
-    color: "_rePaint"
+    color: "_rePaint",
+    colorBlock: "_rePaint",
   }
   constructor(options: VBlockOptions) {
     super(options)
-    this.color = options.color
-    this._refreshPathMap = clone(Block.refreshPathMap)
+    this.colorBlock = options.colorBlock
+    this._refreshPathMap = clone(VBlock.refreshPathMap)
+  }
+  get isPinned() {
+    return this.colorBlock.isPinned
+  }
+  get color() {
+    return this.colorBlock.color
   }
   public formEle(): Snap.Element {
     let s = this.getGroup("block")
@@ -64,6 +73,7 @@ export default class Block extends Vunit {
     })
   }
   protected _rePaint() {
+    // console.log('block _rePaint', this.uid);
     let rect = <Snap.Element>this.sele
     var cStr: String = "transparent"
     if (this.color) {
@@ -92,7 +102,8 @@ export default class Block extends Vunit {
    */
   public bindSeleEvents() {
     var me = this
-    let onmove = function(dx, dy, x, y, e) {
+    const onmove = function(dx, dy, x, y, e) {
+      if (me.isPinned) return
       // console.log('onmove', arguments);
       // console.log('onmove', e.offsetY, e.offsetY);
       let dco = me._state.startMouseOffset
@@ -101,7 +112,8 @@ export default class Block extends Vunit {
       // let h = this.attr('height') >> 0
       // this.attr({x: e.offsetX - w / 2, y: e.offsetY - h / 2})
     }
-    let onstart = function(x, y, e) {
+    const onstart = function(x, y, e) {
+      if (me.isPinned) return
       // console.log('onstart', arguments);
       let dsc = getSeleCoord(this)
       let startMouseOffset = {
@@ -121,8 +133,8 @@ export default class Block extends Vunit {
         startMouseOffset
       })
     }
-    let onend = function(e) {
-      // console.log('onend', arguments);
+    const onend = function(e) {
+      if (me.isPinned) return
       let dsc = me._state.dragStartCoord
       let dragEndCoord = getSeleCoord(this)
       dragEndCoord.x += me._state.startMouseOffset.x

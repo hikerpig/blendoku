@@ -11,7 +11,7 @@ export interface IBlendokuStore extends GameData {
 export class BlendokuStore implements IBlendokuStore {
   @observable game: Object
   @observable config: GameConfig
-  @observable blocks
+  @observable blocks: ColorBlock[]
   @observable riddleFrames
   @observable actionCount:number = 0
 
@@ -55,10 +55,13 @@ export class BlendokuStore implements IBlendokuStore {
     let deferInfo:any = {}
     // console.log('fBlock', fBlock);
     if (tBlock && fBlock) {
-      let fColor = clone(fBlock.color)
-      let tColor = clone(tBlock.color)
-      assign(tBlock.color, fColor)
-      assign(fBlock.color, tColor)
+      if (tBlock.isPinned || fBlock.isPinned) {
+      } else {
+        let fColor = clone(fBlock.color)
+        let tColor = clone(tBlock.color)
+        assign(tBlock.color, fColor)
+        assign(fBlock.color, tColor)
+      }
       deferInfo.shouldRewind = true
     } else {
       if (!fBlock) {
@@ -90,7 +93,7 @@ const store = new BlendokuStore
 //   () => console.log(store.blocks.length),
 //   () => {
 //     console.log('blocks length changed', arguments);
-//
+
 //   }
 // )
 

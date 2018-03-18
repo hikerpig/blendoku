@@ -60,8 +60,7 @@ function parseToHsl(input: ColorDesc): HSLColor {
   } else {
     output = makeHsl.apply(null, input)
   }
-  console.log('output color', output);
-
+  // console.log('output color', output);
   return output
 }
 
